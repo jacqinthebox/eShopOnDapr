@@ -1,31 +1,48 @@
 data "azurerm_kubernetes_service_versions" "current" {
-  location = "West Europe"
+  location = "East US"
 }
 
 //using locals because interpolation would work
 locals {
   common_tags = {
-    environment = "sandbox"
+    environment = "demo"
     creation_date = formatdate("YYYY-MM-DD", timestamp())
   }
 }
 
 module "kube-group" {
-  source = "../../terraform/modules/azure/resource_group"
+  source = "../../modules/azure/resource_group"
   rg_name = "${var.prefix}-cluster-rg"
   rg_location = var.location
   rg_tags     = local.common_tags
 }
 
+module "acr" {
+  source = "../../modules/azure/acr"
+  tags   = local.common_tags
+  resource_group_name = module.kube-group.name
+  location = var.location
+  acr_name = "kubedemo22"
+}
+
+module "vault" {
+  source = "../../modules/azure/keyvault"
+  location = var.location
+  tags = local.common_tags
+  prefix = var.prefix
+  resource_group_name = module.kube-group.name
+}
+
 module "loganalytics" {
-  source = "../../terraform/modules/azure/loganalytics"
+  source = "../../modules/azure/loganalytics"
   resource_group_name = module.kube-group.name
   tags = local.common_tags
   prefix = var.prefix
+  location = var.location
 }
 
 module "vnet" {
-  source = "../../terraform/modules/azure/vnet"
+  source = "../../modules/azure/vnet"
   tags                = local.common_tags
   vnet_address_space  = var.vnet_address_space
   vnet_location       = module.kube-group.rg_location
@@ -34,8 +51,37 @@ module "vnet" {
   prefix              = var.prefix
 }
 
+
+module "mssql_server" {
+  source = "../../modules/azure/mssql_server"
+  location            = var.location
+  vnet_rule_subnet_id = module.vnet.subnet_ids["kube-subnet"]
+  databases = var.databases
+  sql_firewall_rules = var.sql_firewall_rules
+  tags = local.common_tags
+  prefix = var.prefix
+  resource_group_name = module.kube-group.name
+}
+
+module "service_bus" {
+  source = "../../modules/azure/servicebus"
+  resource_group_name = module.kube-group.name
+  tags                = local.common_tags
+  location = var.location
+  prefix = var.prefix
+}
+
+module "cosmosdb" {
+  source = "../../modules/azure/cosmosdb"
+  location = var.location
+  resource_group_name = module.kube-group.name
+  tags = local.common_tags
+  prefix = var.prefix
+}
+
+
 module "kube" {
-  source                          = "../../terraform/modules/azure/aks"
+  source                          = "../../modules/azure/aks"
   depends_on                      = [
     module.vnet.subnet_ids
   ]
@@ -54,10 +100,11 @@ module "kube" {
   admin_group_object_ids = var.admin_group_object_ids
   tenant_id = var.tenant_id
   local_account_disabled = false
+  azurerm_container_registry_id = module.acr.acr_id
 }
 
 module "kube_nodepools" {
-  source = "../../terraform/modules/azure/aks_nodepools"
+  source = "../../modules/azure/aks_nodepools"
   additional_nodepools = var.additional_nodepools
   kubernetes_cluster_id = module.kube.kube_cluster_id
   vnet_subnet_id        = module.vnet.subnet_ids["kube-subnet"]
@@ -65,15 +112,16 @@ module "kube_nodepools" {
 }
 
 module "key_vault_identity" {
-  source = "../../terraform/modules/azure/user_assigned_identity"
+  source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
   identity_name = "key-vault-identity"
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
 
 module "aad_pod_identity" {
-  source = "../../terraform/modules/azure/user_assigned_identity"
+  source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
   identity_name = "pod-identity"
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
+

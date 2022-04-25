@@ -28,8 +28,8 @@ jobs:
       TF_VAR_vm_admin_password: ${{ secrets.VM_ADMIN_PASSWORD }}
       TF_VAR_backend_storage_account_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
       TF_VAR_backend_resource_group_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
-      TF_WORK_DIR: "examples/aks-public"
-      TF_STATE_KEY: "aks/public"
+      TF_WORK_DIR: "deploy/terraform/environments/kube-demo"
+      TF_STATE_KEY: "kubedemo"
       #TF_VAR_nsg_source_address_prefix: ${{ secrets.MY_IP_ADDRESS }}
 
     steps:

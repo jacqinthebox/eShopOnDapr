@@ -4,9 +4,9 @@ SUBSCRIPTION=e267d216-a7aa-42e4-905a-f18316a144c4 #can be name or guid
 RESOURCE_GROUP_NAME=demo01-tfstate-dev-rg
 STORAGE_ACCOUNT_NAME=demo001tfstatedevstorage
 APP_REGISTRATION_NAME=demo01-service-account
-REPO=yulia-meijs/k8s-demo
+REPO=yulia-meijs/eShopOnDapr
 
-echo "Plumbing to unboard an Azure subscription for Terraform and run pipelines with Github Actions."
+echo "Plumbing to onboard an Azure subscription for Terraform and run pipelines with Github Actions."
 
 if ! hash gh 2>/dev/null; then
     echo >&2 "gh cli is not installed"

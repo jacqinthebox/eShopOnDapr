@@ -1,5 +1,5 @@
 variable prefix {
-  default = "generic-dev"
+  default = "kube-demo"
 }
 
 variable "api_server_authorized_ip_ranges" {
@@ -7,22 +7,34 @@ variable "api_server_authorized_ip_ranges" {
 }
 
 variable "location" {
-  default = "westeurope"
+  default = "East US" #"westeurope"
 }
 
+variable "databases" {
+  default = [
+    {name: "Microsoft.eShopOnDapr.Services.CatalogDb", license_type: "BasePrice",sku_name: "Basic", zone_redundant: false },
+    {name: "Microsoft.eShopOnDapr.Services.IdentityDb", license_type: "BasePrice",sku_name: "Basic", zone_redundant: false },
+    {name: "Microsoft.eShopOnDapr.Services.OrderingDb", license_type: "BasePrice",sku_name: "Basic", zone_redundant: false },
+
+  ]
+}
+
+variable "sql_firewall_rules" {
+  default = [{ name : "office_hq", start_ip_address = "80.60.145.75", end_ip_address= "80.60.145.75" },]
+}
 
 variable "vnet_address_space" {
-  default = ["10.21.0.0/16"]
+  default = ["10.22.0.0/16"]
 }
 
 variable "subnets" {
   default = {
     kube-subnet = {
-      address_prefixes  = ["10.21.32.0/19"]
+      address_prefixes  = ["10.22.32.0/19"]
       service_endpoints = ["Microsoft.AzureCosmosDB", "Microsoft.Sql"]
     },
     generic-subnet = {
-      address_prefixes  = ["10.21.0.0/24"]
+      address_prefixes  = ["10.22.0.0/24"]
       service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
     }
   }
@@ -63,7 +75,7 @@ variable "additional_nodepools" {
       mode               = "User"
       vm_size            = "Standard_B2ms"
       availability_zones = ["1", "2", "3"]
-      taints             = [""]
+      taints             = null
       labels             = {
         load : "memoryOptimized"
       }

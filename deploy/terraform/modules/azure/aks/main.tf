@@ -82,6 +82,14 @@ resource "azurerm_kubernetes_cluster" "kube" {
   local_account_disabled = var.local_account_disabled
   //maintenance_window
 
+  linux_profile {
+    admin_username = var.node_admin_username
+    ssh_key {
+      # remove any new lines using the replace interpolation function
+      key_data = replace(var.public_ssh_key == "" ? module.ssh-key.public_ssh_key : var.public_ssh_key, "\n", "")
+    }
+  }
+
   network_profile {
     network_plugin     = var.network_profile.network_plugin # by default set to azure
     network_mode       = var.network_profile.network_mode
@@ -116,3 +124,15 @@ resource "azurerm_kubernetes_cluster" "kube" {
   tags = var.tags
 }
 
+module "ssh-key" {
+  source         = "../../global/ssh-key"
+  public_ssh_key = var.public_ssh_key == "" ? "" : var.public_ssh_key
+}
+
+resource "azurerm_role_assignment" "acr_role" {
+  count = var.azurerm_container_registry_enabled == true ? 1 : 0
+  principal_id                     = azurerm_kubernetes_cluster.kube.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = var.azurerm_container_registry_id
+  skip_service_principal_aad_check = true
+}

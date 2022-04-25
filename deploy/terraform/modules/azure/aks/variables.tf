@@ -16,7 +16,6 @@ variable "node_resource_group" {
   default = null
 }
 
-
 variable "tags" {
   type = map(string)
   description = "A map of key value pairs to tag resources"
@@ -100,6 +99,15 @@ variable "default_node_pool_vnet_subnet_id" {
   description = "The object id of the subnet"
 }
 
+variable "public_ssh_key" {
+  type = string
+  description = "The path to a public ssh key file"
+  default = ""
+}
+variable "node_admin_username" {
+  default = "node-admin"
+}
+
 
 variable "api_server_authorized_ip_ranges" {
   type = list(string)
@@ -162,4 +170,15 @@ variable "admin_group_object_ids" {
 
 variable "default_node_pool_only_critical_addons_enabled" {
   default = false
+}
+
+variable "azurerm_container_registry_id" {
+  type = string
+  description = "The resource id of the container registry."
+  default = null
+}
+
+//only create this when there is an azurerm container registry specified
+variable "azurerm_container_registry_enabled" {
+  default = true
 }

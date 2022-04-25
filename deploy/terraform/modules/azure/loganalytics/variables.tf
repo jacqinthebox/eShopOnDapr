@@ -1,7 +1,6 @@
 variable "location" {
   description = "(Required). The location of the cluster. Optional value are `az account list-locations -o table`"
   type = string
-  default = "West Europe"
 }
 
 variable "tags" {
