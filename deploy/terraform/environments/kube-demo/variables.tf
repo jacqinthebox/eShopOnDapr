@@ -20,7 +20,7 @@ variable "databases" {
 }
 
 variable "sql_firewall_rules" {
-  default = [{ name : "office_hq", start_ip_address = "80.60.145.75", end_ip_address= "80.60.145.75" },]
+  default = [{ name : "office_hq", start_ip_address = "1.2.3.4", end_ip_address= "1.2.3.4" },]
 }
 
 variable "vnet_address_space" {
