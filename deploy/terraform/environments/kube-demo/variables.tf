@@ -69,23 +69,6 @@ variable "additional_nodepools" {
       max_pods                       = 30
       min_pods                       = null
       os_disk_size_gb                = 50
-    },
-    "memory01" = {
-      node_count         = 1
-      name               = "memory"
-      mode               = "User"
-      vm_size            = "Standard_B2ms"
-      availability_zones = ["1", "2", "3"]
-      taints             = null
-      labels             = {
-        load : "memoryOptimized"
-      }
-      cluster_auto_scaling           = false
-      cluster_auto_scaling_min_count = null
-      cluster_auto_scaling_max_count = null
-      max_pods                       = 250
-      min_pods                       = null
-      os_disk_size_gb                = 30
-    },
+    }
   }
 }
