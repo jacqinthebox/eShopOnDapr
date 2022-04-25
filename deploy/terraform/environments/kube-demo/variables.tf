@@ -2,6 +2,10 @@ variable prefix {
   default = "kube-demo"
 }
 
+variable "acr_name" {
+  default = "kubedemo2022"
+}
+
 variable "api_server_authorized_ip_ranges" {
   default = []
 }

@@ -22,7 +22,7 @@ module "acr" {
   tags   = local.common_tags
   resource_group_name = module.kube-group.name
   location = var.location
-  acr_name = "kubedemo22"
+  acr_name = var.acr_name
 }
 
 module "vault" {
