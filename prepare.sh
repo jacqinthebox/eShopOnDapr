@@ -3,7 +3,7 @@
 SUBSCRIPTION=e267d216-a7aa-42e4-905a-f18316a144c4 #can be name or guid
 RESOURCE_GROUP_NAME=demo01-tfstate-dev-rg
 STORAGE_ACCOUNT_NAME=demo001tfstatedevstorage
-APP_REGISTRATION_NAME=demo01-service-account
+APP_REGISTRATION_NAME=demo01-owner
 REPO=yulia-meijs/eShopOnDapr
 
 echo "Plumbing to onboard an Azure subscription for Terraform and run pipelines with Github Actions."
@@ -51,7 +51,7 @@ tenant_id=$(az account show --query tenantId -o tsv)
 echo "Tenant: $tenant_id"
 
 az account set --subscription $subscription_id
-SECRET=$(az ad sp create-for-rbac --name $APP_REGISTRATION_NAME --role contributor --scopes /subscriptions/$subscription_id --years 10)
+SECRET=$(az ad sp create-for-rbac --name $APP_REGISTRATION_NAME --role owner --scopes /subscriptions/$subscription_id --years 10)
 CLIENT_ID=$(echo $SECRET | jq -r .appId)
 CLIENT_SECRET=$(echo $SECRET | jq -r .password)
 
