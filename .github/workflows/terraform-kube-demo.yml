@@ -1,4 +1,4 @@
-name: 'deploy aks public cluster'
+name: 'deploy kube demo cluster'
 on:
   workflow_dispatch:
     inputs:
