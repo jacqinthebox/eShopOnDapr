@@ -59,9 +59,9 @@ resource "azurerm_kubernetes_cluster" "kube" {
     azure_rbac_enabled = true
   }
 
-  //azure_policy_enabled
+  azure_policy_enabled = var.azure_policy_enabled
   //disk_encryption_set_id
-  //http_application_routing_enabled
+  http_application_routing_enabled = var.http_application_routing_enabled
   //http_proxy_config
 
   /*

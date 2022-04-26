@@ -174,11 +174,20 @@ variable "default_node_pool_only_critical_addons_enabled" {
 
 variable "azurerm_container_registry_id" {
   type = string
-  description = "The resource id of the container registry."
+  description = "Required when azurerm_container_registry_enabled is true."
   default = null
 }
 
 //only create this when there is an azurerm container registry specified
 variable "azurerm_container_registry_enabled" {
-  default = true
+  description = "Required. Set to true when there is an azurerm container registry you want link"
+  type = bool
+}
+
+variable "azure_policy_enabled" {
+  default = false
+}
+
+variable "http_application_routing_enabled" {
+  default = false
 }
