@@ -29,7 +29,7 @@ variable "subnets" {
 }
 
 variable "tenant_id" {
-  default = "63060cb1-0960-4615-8769-b110040fa763"
+  default = ""
 }
 
 variable "admin_group_object_ids" {
