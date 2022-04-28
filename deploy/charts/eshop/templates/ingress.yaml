@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: {{ .Values.apiGatewayUrlExternal }}
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: apigateway
+                port:
+                  number: 80
+    - host: {{ .Values.blazorClientUrlExternal }}
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: blazor-client
+                port:
+                  number: 80
+    - host: {{ .Values.identityUrlExternal }}
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: identity-api
+                port:
+                  number: 80

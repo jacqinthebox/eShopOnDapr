@@ -1,48 +1,49 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: basket-cm
+  name: webshoppingagg-cm
   namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: basket
+    service: webshoppingagg
 data:
   ASPNETCORE_ENVIRONMENT: Development
-  ASPNETCORE_URLS: http://0.0.0.0:80
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30008
-  SeqServerUrl: http://seq
+  IdentityUrlExternal: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
+  SeqServerUrl: {{ .Values.protcol }}://{{ .Values.seqFqdn }}
+  BasketUrlHC: http://basket-api/hc
+  CatalogUrlHC: http://catalog-api/hc
+  IdentityUrlHC: http://identity-api/hc
 
 ---
 
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: basket
+  name: webshoppingagg
   namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: basket
+    service: webshoppingagg
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: basket
+      service: webshoppingagg
   template:
     metadata:
       labels:
         app: eshop
-        service: basket
+        service: webshoppingagg
       annotations:
         dapr.io/enabled: "true"
-        dapr.io/app-id: "basket-api"
+        dapr.io/app-id: "webshoppingagg"
         dapr.io/app-port: "80"
         dapr.io/config: "dapr-config"
-        dapr.io/log-as-json: "true"
     spec:
       containers:
-        - name: basket-api
-          image: eshopdapr/basket.api:latest
+        - name: webshoppingagg
+          image: eshopdapr/webshoppingagg:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -50,7 +51,7 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: basket-cm
+                name: webshoppingagg-cm
           readinessProbe:
             httpGet:
               path: /hc
@@ -63,11 +64,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: basket-api
+  name: webshoppingagg
   namespace: {{ .Values.namespace }}
   labels:
     app: eshop
-    service: basket
+    service: webshoppingagg
 spec:
   ports:
     - port: 80
@@ -75,4 +76,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    service: basket
+    service: webshoppingagg

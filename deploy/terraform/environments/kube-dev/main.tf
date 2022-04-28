@@ -67,18 +67,3 @@ module "kube_nodepools" {
   vnet_subnet_id        = module.vnet.subnet_ids["kube-subnet"]
   orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
 }
-
-module "key_vault_identity" {
-  source = "../../modules/azure/user_assigned_identity"
-  location = module.kube.kube_cluster_location
-  identity_name = "key-vault-identity"
-  identity_resourcegroup_name = module.kube.kube_cluster_node_group
-}
-
-module "aad_pod_identity" {
-  source = "../../modules/azure/user_assigned_identity"
-  location = module.kube.kube_cluster_location
-  identity_name = "pod-identity"
-  identity_resourcegroup_name = module.kube.kube_cluster_node_group
-}
-
