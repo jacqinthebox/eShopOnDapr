@@ -2,6 +2,7 @@
 
 create cluster
 ```sh
+az account set --subscription demo01
 az group create -g eshop-dev-cluster-rg --location westeurope
 az aks create -g eshop-dev-cluster-rg -n eshop-dev-cluster --node-count 1 --location westeurope
 ```
