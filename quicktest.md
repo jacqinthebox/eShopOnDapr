@@ -5,6 +5,8 @@ create cluster
 az account set --subscription demo01
 az group create -g eshop-dev-cluster-rg --location westeurope
 az aks create -g eshop-dev-cluster-rg -n eshop-dev-cluster --node-count 1 --location westeurope
+
+(optional add --generate-ssh-keys)
 ```
 
 add creds to kubeconfig
@@ -31,6 +33,24 @@ install ingress controller
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
+```
+
+install prometheus and grafana (which ns should we use?)
+
+```shell
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+
+helm repo update
+
+helm install prometheus prometheus-community/prometheus
+helm install grafana grafana/grafana
+```
+
+install k8s dashboard
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
 ```
 
 check what is your external ip
