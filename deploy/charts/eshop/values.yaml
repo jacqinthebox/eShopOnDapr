@@ -4,3 +4,5 @@ apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
 seqFqdn: seq.eshop.boringtestdomain.nl
+sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+# Server=426-aad-csi-sql-srv.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=207ff781-d583-4439-9c7b-87b8afbb3be6;

@@ -1,10 +1,17 @@
 ## Quick & dirty aks deployment
 
+register features
+
+```sh
+az feature register --name EnablePodIdentityPreview   --namespace Microsoft.ContainerService
+az extension add --name aks-preview
+```
+
 create cluster
 ```sh
 az account set --subscription demo01
 az group create -g eshop-dev-cluster-rg --location westeurope
-az aks create -g eshop-dev-cluster-rg -n eshop-dev-cluster --node-count 1 --location westeurope
+az aks create -g eshop-dev-cluster-rg -n eshop-dev-cluster --node-count 1 --location westeurope --enable-pod-identity --network-plugin azure
 
 (optional add --generate-ssh-keys)
 ```
@@ -67,4 +74,30 @@ helm upgrade --install myshop deploy/charts/eshop
 ```
 
 Finally, change the ip address in DNS zone.
+
+## Optional
+
+add a managed identity to access sql server
+
+```shell
+group=eshop-dev-cluster-rg
+cluster=eshop-dev-cluster
+az identity create --name sql-managed-identity --resource-group $group 
+```
+
+retrieve the resource id, and then add a pod identity to the cluster. 
+
+```shell
+RESOURCEID=$(az identity show --name sql-managed-identity --resource-group $group --query id -o tsv)
+az aks pod-identity add --resource-group $group --cluster-name $cluster --namespace default --name sql-managed-identity --identity-resource-id $RESOURCEID
+```
+
+grant the managed identity db_owner (or less permissions)
+for this you need to log in with an AD admin, not a local sql account.
+
+```sql
+USE dbname
+CREATE USER [sql-managed-identity] FROM EXTERNAL PROVIDER;
+ALTER ROLE db_owner ADD MEMBER [sql-managed-identity];
+```
 
