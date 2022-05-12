@@ -1,5 +1,5 @@
 namespace: eshop
-protcol: http
+protcol: https
 apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
@@ -11,7 +11,7 @@ ingress:
   forceSSLRedirect: true
   certManager:
     enabled: true
-    environment: staging
+    environment: prod
   tls:
     - secretName: webshopping-gw-tls
       hosts:
