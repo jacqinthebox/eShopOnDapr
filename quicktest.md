@@ -75,7 +75,7 @@ helm upgrade --install myshop deploy/charts/eshop
 
 Finally, change the ip address in DNS zone.
 
-## Optional
+## Optional: managed identity
 
 add a managed identity to access sql server
 
@@ -101,3 +101,29 @@ CREATE USER [sql-managed-identity] FROM EXTERNAL PROVIDER;
 ALTER ROLE db_owner ADD MEMBER [sql-managed-identity];
 ```
 
+## HTTPS
+
+Install cert-manager
+
+https://cert-manager.io/docs/installation/
+
+```shell
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+```
+
+Create the issuers (change the email address):
+
+```shell
+kubectl create --edit -f https://raw.githubusercontent.com/cert-manager/website/master/content/docs/tutorials/acme/example/staging-issuer.yaml
+kubectl create --edit -f https://raw.githubusercontent.com/cert-manager/website/master/content/docs/tutorials/acme/example/staging-issuer.yaml
+```
+
+Now set certManager.enabled to true and certManager.environment to staging in values.yaml, and reapply the helm chart.
+If you do `kubectl get certificates` and they all are READY, you can set certManager.environment to prod and reapply the helm chart.
+
+Delete the certificates:
+
+```shell
+kubectl get certificate -o name | xargs kubectl delete
+
+```
