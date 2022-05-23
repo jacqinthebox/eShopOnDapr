@@ -40,7 +40,7 @@ jobs:
       
       - name: login to acr using helm
         run: |
-          echo $ | helm registry login ${{ secrets.REGISTRY_ENDPOINT }} --username ${{ secrets.USERNAME }} --password-stdin ${{ secrets.PASSWORD }}
+          echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
       
       - name: save helm chart to local registry
         run: |
