@@ -23,7 +23,7 @@ env:
   HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
-  CHART_VERSION: ${{ github.sha }} #1.1 # check if we will use commit sha
+  CHART_VERSION: 1.1 # check if we will use commit sha
 
 jobs:
   build:
