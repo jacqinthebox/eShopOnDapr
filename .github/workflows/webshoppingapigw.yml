@@ -55,20 +55,21 @@ jobs:
           docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Container Registry
-      uses: docker/login-action@v1
+      uses: azure/docker-login@v1
       with:
+        login-server: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
 
     - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
+      run: sudo -E docker build ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
     - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
+      run: sudo -E docker push ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:

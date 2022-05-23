@@ -87,8 +87,9 @@ jobs:
           docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Container Registry
-      uses: docker/login-action@v1
+      uses: azure/docker-login@v1
       with:
+        login-server: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
 
