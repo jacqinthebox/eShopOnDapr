@@ -44,8 +44,8 @@ jobs:
       
       - name: save helm chart to local registry
         run: |
-          helm chart save $/src/azure-vote-helm-chart/ $.azurecr.io/$:latest
+          helm package deploy/charts/eshop ${{ env.ACR_REPO_NAME }}.azurecr.io/$:latest
             
       - name: publish chart to acr
         run: |
-          helm chart push $.azurecr.io/$:latest
+          helm chart push ${{ env.ACR_REPO_NAME }}.azurecr.io/$:latest
