@@ -20,7 +20,7 @@ on:
 
 env:
   HELM_EXPERIMENTAL_OCI: 1
-  HELM_VERSION_TO_INSTALL: 3.5.0
+  HELM_VERSION_TO_INSTALL: latest
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm/e-shop
 
