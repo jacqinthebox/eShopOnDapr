@@ -49,7 +49,8 @@ jobs:
             
       - name: add repo
         run: |
-          helm repo add ${{ env.ACR_REPO_NAME }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.ACR_REPO_NAME }}
+          helm repo add ${{ env.ACR_REPO_NAME }} oci://${{ env.ACR_NAME }}.azurecr.io/${{ env.ACR_REPO_NAME }}
+
       - name: publish chart to acr
         run: |
-          helm push eShopOnDapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/eShopOnDapr-${{ env.CHART_VERSION }}
+          helm push eShopOnDapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/${{ env.ACR_REPO_NAME }}
