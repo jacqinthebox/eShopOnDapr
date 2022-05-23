@@ -22,7 +22,7 @@ env:
   HELM_EXPERIMENTAL_OCI: 1
   HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
-  ACR_REPO_NAME: helm/e-shop
+  ACR_REPO_NAME: helm-eshop
   CHART_VERSION: 1.1 # check if we will use commit sha
 
 jobs:
@@ -47,6 +47,9 @@ jobs:
         run: |
           helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
+      - name: add repo
+        run: |
+          helm repo add ${{ env.ACR_REPO_NAME }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.ACR_REPO_NAME }}
       - name: publish chart to acr
         run: |
           helm push eShopOnDapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/eShopOnDapr-${{ env.CHART_VERSION }}
