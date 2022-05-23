@@ -1,21 +1,17 @@
-# https://docs.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=sql-server-ver15
-resource "random_password" "password" {
-  length           = 24
-  special          = true
-  lower = true
-  upper = true
-  override_special = "$%"
-}
-
-
 resource "azurerm_mssql_server" "server" {
   name                         = var.sql_server_name == null ? "${var.prefix}-sqlsrv" : var.sql_server_name
   location                     = var.location
   resource_group_name          = var.resource_group_name
   version                      = var.sql_version
-  administrator_login          = var.sql_admin_name == null ? "${var.prefix}-dbadmin" : var.sql_admin_name
-  administrator_login_password = random_password.password.result
   tags  = var.tags
+  identity {
+    type = "SystemAssigned"
+  }
+  azuread_administrator {
+    login_username = "sql-admin"
+    object_id = "50e73168-0654-41b3-ba63-cf08fa5b3e33"
+    azuread_authentication_only = true
+    }
 }
 
 //allow the kube subnet

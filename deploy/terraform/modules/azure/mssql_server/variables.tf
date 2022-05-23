@@ -49,6 +49,18 @@ variable "databases" {
   ]
 }
 
+variable "identity" {
+  default = "UserAssigned"
+  type = string
+  description = "MSI type"
+}
+
+variable "ids" {
+  default = null
+  type = list
+  description = "Identities list"
+}
+
 /*license_type - (Optional) Specifies the license type applied to this database. Possible values are LicenseIncluded and BasePrice.*/
 /*sku_name - (Optional) Specifies the name of the SKU used by the database. For example, GP_S_Gen5_2,HS_Gen4_1,BC_Gen5_2, ElasticPool, Basic,S0, P2 ,DW100c, DS100. Changing this from the HyperScale service tier to another service tier will force a new resource to be created.*/
 
