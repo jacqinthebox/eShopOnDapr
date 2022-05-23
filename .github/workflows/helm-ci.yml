@@ -20,7 +20,7 @@ on:
 
 env:
   HELM_EXPERIMENTAL_OCI: 1
-  HELM_VERSION_TO_INSTALL: latest
+  HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm/e-shop
 
@@ -44,7 +44,7 @@ jobs:
       
       - name: save helm chart to local registry
         run: |
-          helm package deploy/charts/eshop ${{ env.ACR_NAME }}.azurecr.io/${{ env.ACR_REPO_NAME }}:latest
+          helm package deploy/charts/eshop
             
       - name: publish chart to acr
         run: |
