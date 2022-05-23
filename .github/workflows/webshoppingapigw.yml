@@ -62,14 +62,14 @@ jobs:
         password: ${{ secrets.PASSWORD }}
 
     - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker build ${{ env.SERVICE }}
+      run: sudo -E docker-compose build ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
     - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker push ${{ env.SERVICE }}
+      run: sudo -E docker-compose push ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
