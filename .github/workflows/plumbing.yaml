@@ -7,11 +7,22 @@ on:
     types:
       - completed
   workflow_dispatch:
-    paths:
-    - .github/workflows/plumbing.yml
+    push:
+      branches:
+      - main
+
+      paths:
+      - .github/workflows/plumbing.yml
+    
+    pull_request:
+      branches:
+      - main
+
+      paths:
+      - .github/workflows/plumbing.yml
 
 env:
-  ENVIRONMENT: kube-prod #TODO
+  ENVIRONMENT: kube-dev #TODO
 
 jobs:
   deploy-to-aks:
