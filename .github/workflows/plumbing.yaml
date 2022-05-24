@@ -44,8 +44,8 @@ jobs:
    
     - name: dapr
       run: |
-        echo $ | wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
-        echo $ | dapr init -k
+        helm repo add dapr https://dapr.github.io/helm-charts/ && helm repo update
+        helm upgrade --install dapr dapr/dapr --namespace dapr-system --create-namespace --wait
           
     - name: cert-manager
       run: |
@@ -53,6 +53,12 @@ jobs:
         echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
         echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
         echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
+
+    - name: ingress-controller
+      run: |
+        echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        echo $ | helm repo update
+        exho $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
 
     - name: ingress-controller
       run: |
