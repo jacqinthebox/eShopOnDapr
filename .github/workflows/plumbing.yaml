@@ -6,6 +6,9 @@ on:
     workflows: ["kube-prod-cluster", "kube-dev-cluster"]
     types:
       - completed
+  workflow_dispatch:
+    paths:
+    - .github/workflows/plumbing.yml
 
 env:
   ENVIRONMENT: kube-prod #TODO
