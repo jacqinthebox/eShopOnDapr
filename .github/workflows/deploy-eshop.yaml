@@ -45,7 +45,7 @@ jobs:
     #TODO: please check
     - name: deploy eshop
       run: |
-        echo $ | apt-get update && apt-get install jq
+        # echo $ | apt-get update && apt-get install jq
         echo $ | registryToken=$(az acr login --name ${{ secrets.REGISTRY_ENDPOINT }} --expose-token | jq -r '.accessToken')
         echo $(registryToken) | helm registry login ${{ secrets.REGISTRY_ENDPOINT }} -u 00000000-0000-0000-0000-000000000000 --password-stdin
         echo $ | helm repo add eshop oci://demo01cr.azurecr.io/helm/eshopondapr
