@@ -2,10 +2,10 @@ name: plumbing
 
 # Only trigger, when the infrastructure deployment succeeded
 on:
-  # workflow_run:
-  #   workflows: ["kube-dev-cluster"]
-  #   types:
-  #     - completed
+  workflow_run:
+    workflows: ["kube-dev-cluster"]
+    types:
+      - completed
   workflow_dispatch:
   push:
     branches:
@@ -40,13 +40,7 @@ jobs:
       uses: Azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: ingress-controller
-      run: |
-        echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        echo $ | helm repo update
-        exho $ | helm install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
-    
+   
     - name: dapr
       run: |
         echo $ | wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
@@ -57,3 +51,9 @@ jobs:
         echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
         echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml'
         echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml'
+
+    - name: ingress-controller
+      run: |
+        echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        echo $ | helm repo update
+        exho $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
