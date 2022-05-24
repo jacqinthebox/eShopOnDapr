@@ -90,7 +90,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
 
     - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build ${{ env.SERVICE }}
+      run: sudo -E docker-compose build -t ${{ env.SERVICE }}:${{ github.sha }}  ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
