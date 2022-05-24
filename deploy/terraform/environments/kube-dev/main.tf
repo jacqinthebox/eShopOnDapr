@@ -57,7 +57,8 @@ module "kube" {
   tenant_id = var.tenant_id
   local_account_disabled = false
   http_application_routing_enabled = true
-  azurerm_container_registry_enabled = false
+  azurerm_container_registry_enabled = true
+  azurerm_container_registry_id = "/subscriptions/e267d216-a7aa-42e4-905a-f18316a144c4/resourceGroups/demo01-rg/providers/Microsoft.ContainerRegistry/registries/demo01cr"
 }
 
 module "kube_nodepools" {
