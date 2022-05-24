@@ -15,6 +15,7 @@ on:
     - .github/workflows/deploy-eshop.yaml
 
 env:
+  ENVIRONMENT: kube-dev #TODO
   ACR_NAME: demo01cr
   ESHOP_NAMESPACE: eshop
 
