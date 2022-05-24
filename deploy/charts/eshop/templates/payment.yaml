@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: payment-api
-          image: eshopdapr/payment.api:latest
+          image: demo01cr.azurecr.io/payment.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

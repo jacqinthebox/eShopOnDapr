@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
         - name: ordering-api
-          image: eshopdapr/ordering.api:latest
+          image: demo01cr.azurecr.io/ordering.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

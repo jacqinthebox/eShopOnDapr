@@ -51,7 +51,7 @@ spec:
     spec:
       containers:
         - name: identity-api
-          image: eshopdapr/identity.api:latest
+          image: demo01cr.azurecr.io/identity.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

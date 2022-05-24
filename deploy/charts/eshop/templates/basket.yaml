@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: basket-api
-          image: eshopdapr/basket.api:latest
+          image: demo01cr.azurecr.io/basket.api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

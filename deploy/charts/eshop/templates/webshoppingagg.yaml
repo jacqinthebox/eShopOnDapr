@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: webshoppingagg
-          image: eshopdapr/webshoppingagg:latest
+          image: demo01cr.azurecr.io/webshoppingagg:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
