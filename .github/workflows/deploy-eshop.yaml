@@ -1,4 +1,4 @@
-name: plumbing
+name: deploy-eshop
 
 # Only trigger, when the infrastructure deployment succeeded
 on:
