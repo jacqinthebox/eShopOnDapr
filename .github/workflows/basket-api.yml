@@ -19,6 +19,7 @@ on:
     - src/BuildingBlocks/**
     - src/Services/Basket/**
     - .github/workflows/basket-api.yml
+    
 env:
   SERVICE: basket-api
   IMAGE: basket.api:v0.1

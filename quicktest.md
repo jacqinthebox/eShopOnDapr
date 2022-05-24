@@ -19,7 +19,7 @@ az aks create -g eshop-dev-cluster-rg -n eshop-dev-cluster --node-count 1 --loca
 add creds to kubeconfig
 
 ```shell
-az aks get-credentials --resource-group eshop-dev-cluster-rg --name eshop-dev-cluster
+az aks get-credentials --resource-group kube-dev-cluster-rg --name kube-dev-cluster  
 ```
 
 install dapr cli
