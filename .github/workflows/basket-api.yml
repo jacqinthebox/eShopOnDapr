@@ -21,7 +21,7 @@ on:
     - .github/workflows/basket-api.yml
 env:
   SERVICE: basket-api
-  IMAGE: basket.api:${{ github.sha }}
+  IMAGE: basket.api:v0.1
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
 
