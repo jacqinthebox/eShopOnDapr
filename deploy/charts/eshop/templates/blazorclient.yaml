@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
         - name: blazorclient
-          image: eshopdapr/blazor.client:latest
+          image: demo01cr.azurecr.io/blazor.client:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
