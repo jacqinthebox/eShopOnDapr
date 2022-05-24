@@ -90,14 +90,14 @@ jobs:
         password: ${{ secrets.PASSWORD }}
 
     - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build -t ${{ env.SERVICE }}:${{ github.sha }}  ${{ env.SERVICE }}
+      run: sudo -E docker-compose build -t ${{ env.IMAGE }}:${{ github.sha }}  ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
-    - name: Compose push ${{ env.SERVICE }}
-      run: sudo -E docker-compose push ${{ env.SERVICE }}
+    - name: Compose push ${{ env.IMAGE }}:${{ github.sha }}
+      run: sudo -E docker-compose push ${{ env.IMAGE }}:${{ github.sha }}
       working-directory: ./src
       shell: bash
       env:
