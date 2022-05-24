@@ -45,7 +45,7 @@ jobs:
     #TODO: please check
     - name: deploy eshop
       run: |
-        echo $ | helm repo add eshop https://demo01cr.azurecr.io/helm/eshopondapr
+        echo $ | helm repo add eshop oci://demo01cr.azurecr.io/helm/eshopondapr
         echo $ | helm repo update
         echo $ | helm upgrade --install eshop eshop --namespace ${{ env.ESHOP_NAMESPACE }}
 
