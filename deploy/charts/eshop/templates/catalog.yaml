@@ -9,7 +9,7 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  SeqServerUrl: {{ .Values.protcol }}://{{ .Values.seqFqdn }}
+  SeqServerUrl: {{ .Values.protocol }}://{{ .Values.seqFqdn }}
   # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
   ConnectionStrings__CatalogDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.CatalogDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
