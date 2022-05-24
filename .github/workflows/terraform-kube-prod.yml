@@ -1,4 +1,4 @@
-name: 'kube prod cluster'
+name: kube-prod-cluster
 on:
   workflow_dispatch:
     inputs:

@@ -115,7 +115,7 @@ Create the issuers (change the email address):
 
 ```shell
 kubectl create --edit -f https://raw.githubusercontent.com/cert-manager/website/master/content/docs/tutorials/acme/example/staging-issuer.yaml
-kubectl create --edit -f https://raw.githubusercontent.com/cert-manager/website/master/content/docs/tutorials/acme/example/staging-issuer.yaml
+kubectl create --edit -f https://raw.githubusercontent.com/cert-manager/website/master/content/docs/tutorials/acme/example/production-issuer.yaml
 ```
 
 Now set certManager.enabled to true and certManager.environment to staging in values.yaml, and reapply the helm chart.

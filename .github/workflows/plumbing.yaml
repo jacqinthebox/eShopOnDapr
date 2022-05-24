@@ -1,0 +1,46 @@
+name: plumbing
+
+# Only trigger, when the infrastructure deployment succeeded
+on:
+  workflow_run:
+    workflows: ["kube-prod-cluster", "kube-dev-cluster"]
+    types:
+      - completed
+
+env:
+  ENVIRONMENT: kube-prod #TODO
+
+jobs:
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+        resource-group: ${{ env.ENVIRONMENT }}"-cluster-rg"
+        cluster-name: ${{ env.ENVIRONMENT }}"-cluster"
+
+    - name: Get code from the repository
+      uses: actions/checkout@v1
+      with:
+        ref: main
+
+    - name: Helm tool installer
+      uses: Azure/setup-helm@v1
+
+    - name: Azure Login
+      uses: Azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy
+      run: >
+        wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+        dapr init -k
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo update
+        helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+        kubectl apply -f './deploy/cert-manager/staging-issuer.yaml'
+        kubectl apply -f './deploy/cert-manager/prod-issuer.yaml'

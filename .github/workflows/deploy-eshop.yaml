@@ -1,0 +1,44 @@
+name: plumbing
+
+# Only trigger, when the infrastructure deployment succeeded
+on:
+  workflow_run:
+    workflows: ["helm-ci"]
+    types:
+      - completed
+
+env:
+  ENVIRONMENT: kube-prod #TODO
+  ACR_NAME: demo01cr
+  ACR_REPO_NAME: helm-eshop
+  CHART_VERSION: 1.1 # check if we will use commit sha
+
+jobs:
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+        resource-group: ${{ env.ENVIRONMENT }}"-cluster-rg"
+        cluster-name: ${{ env.ENVIRONMENT }}"-cluster"
+
+    - name: Helm tool installer
+      uses: Azure/setup-helm@v1
+
+    - name: Azure Login
+      uses: Azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: login to acr using helm
+      run: |
+        echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+    
+    #TODO: please check
+    - name: deploy eshop
+      run: >
+        helm repo add eshop  ${{ env.ACR_NAME }}.azurecr.io/helm/eshopondapr
+        helm repo update
+        helm upgrade --install eshop eshop

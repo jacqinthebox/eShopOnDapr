@@ -1,4 +1,4 @@
-name: 'kube dev cluster'
+name: kube-dev-cluster
 on:
   workflow_dispatch:
     inputs:
