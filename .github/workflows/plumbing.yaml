@@ -18,8 +18,8 @@ jobs:
       uses: Azure/aks-set-context@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
-        resource-group: ${{ env.ENVIRONMENT }}"-cluster-rg"
-        cluster-name: ${{ env.ENVIRONMENT }}"-cluster"
+        resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+        cluster-name: ${{ env.ENVIRONMENT }}-cluster
 
     - name: Get code from the repository
       uses: actions/checkout@v1
