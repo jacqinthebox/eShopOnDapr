@@ -12,7 +12,7 @@ on:
     - main
 
     paths:
-    - .github/workflows/plumbing.yml
+    - .github/workflows/plumbing.yaml
 
 env:
   ENVIRONMENT: kube-dev #TODO
@@ -47,10 +47,10 @@ jobs:
         echo $ | helm repo update
         exho $ | helm install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
     
-    # - name: dapr
-    #   run: |
-    #     echo $ | wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
-    #     echo $ | dapr init -k
+    - name: dapr
+      run: |
+        echo $ | wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+        echo $ | dapr init -k
           
     - name: cert-manager
       run: |
