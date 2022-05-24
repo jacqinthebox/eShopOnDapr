@@ -1,9 +1,9 @@
 namespace: eshop
 protcol: https
-apiGatewayUrlExternal: webshopping-gw.prod.eshop.boringtestdomain.nl
-identityUrlExternal: identity-api.prod.eshop.boringtestdomain.nl
-blazorClientUrlExternal: blazor-client.prod.eshop.boringtestdomain.nl
-seqFqdn: seq.prod.eshop.boringtestdomain.nl
+apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
+identityUrlExternal: identity-api.eshop.boringtestdomain.nl
+blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
+seqFqdn: seq.eshop.boringtestdomain.nl
 sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 # Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=207ff781-d583-4439-9c7b-87b8afbb3be6;
 
@@ -11,14 +11,14 @@ ingress:
   forceSSLRedirect: true
   certManager:
     enabled: true
-    environment: prod
+    environment: staging
   tls:
     - secretName: webshopping-gw-tls
       hosts:
-        - webshopping-gw.prod.eshop.boringtestdomain.nl
+        - webshopping-gw.eshop.boringtestdomain.nl
     - secretName: identity-api-tls
       hosts:
-        - identity-api.prod.eshop.boringtestdomain.nl
+        - identity-api.eshop.boringtestdomain.nl
     - secretName: blazor-client-tls
       hosts:
-        - blazor-client.prod.eshop.boringtestdomain.nl
+        - blazor-client.eshop.boringtestdomain.nl
