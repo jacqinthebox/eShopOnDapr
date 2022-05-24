@@ -16,9 +16,10 @@ on:
 
 env:
   ENVIRONMENT: kube-dev #TODO
+  ESHOP_NAMESPACE: eshop
 
 jobs:
-  deploy-to-aks:
+  config-aks:
     runs-on: ubuntu-latest
     steps:
     - name: Azure Kubernetes set context
@@ -49,8 +50,9 @@ jobs:
     - name: cert-manager
       run: |
         echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
-        echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml'
-        echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml'
+        echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+        echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
+        echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
 
     - name: ingress-controller
       run: |

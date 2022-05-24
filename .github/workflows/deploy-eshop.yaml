@@ -6,12 +6,17 @@ on:
     workflows: ["helm-ci"]
     types:
       - completed
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+
+    paths:
+    - .github/workflows/deploy-eshop.yaml
 
 env:
-  ENVIRONMENT: kube-prod #TODO
   ACR_NAME: demo01cr
-  ACR_REPO_NAME: helm-eshop
-  CHART_VERSION: 1.1 # check if we will use commit sha
+  ESHOP_NAMESPACE: eshop
 
 jobs:
   deploy-to-aks:
@@ -38,7 +43,8 @@ jobs:
     
     #TODO: please check
     - name: deploy eshop
-      run: >
-        helm repo add eshop  ${{ env.ACR_NAME }}.azurecr.io/helm/eshopondapr
-        helm repo update
-        helm upgrade --install eshop eshop
+      run: |
+        echo $ | helm repo add eshop ${{ secrets.REGISTRY_ENDPOINT }}/helm/eshopondapr
+        echo $ | helm repo update
+        echo $ | helm upgrade --install eshop eshop --namespace ${{ env.ESHOP_NAMESPACE }}
+
