@@ -9,8 +9,8 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
-  SeqServerUrl: {{ .Values.protcol }}://{{ .Values.seqFqdn }}
+  IdentityUrlExternal: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
+  SeqServerUrl: {{ .Values.protocol }}://{{ .Values.seqFqdn }}
   BasketUrlHC: http://basket-api/hc
   CatalogUrlHC: http://catalog-api/hc
   IdentityUrlHC: http://identity-api/hc

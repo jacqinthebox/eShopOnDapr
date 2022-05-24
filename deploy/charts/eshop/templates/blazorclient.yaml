@@ -9,8 +9,8 @@ metadata:
 data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
-  ApiGatewayUrlExternal: {{ .Values.protcol }}://{{ .Values.apiGatewayUrlExternal }}
-  IdentityUrlExternal: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
+  ApiGatewayUrlExternal: {{ .Values.protocol }}://{{ .Values.apiGatewayUrlExternal }}
+  IdentityUrlExternal: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
 
 ---
 

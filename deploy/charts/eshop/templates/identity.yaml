@@ -10,10 +10,10 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   SeqServerUrl: http://{{ .Values.seqFqdn }}
-  IdentityUrl: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
-  IdentityUrlExternal: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
-  BlazorClientUrlExternal: {{ .Values.protcol }}://{{ .Values.blazorClientUrlExternal }}
-  IssuerUrl: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
+  IdentityUrl: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
+  IdentityUrlExternal: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
+  BlazorClientUrlExternal: {{ .Values.protocol }}://{{ .Values.blazorClientUrlExternal }}
+  IssuerUrl: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
   #BasketApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30005
   #OrderingApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30002
   #ShoppingAggregatorApiUrlExternal: http://{{ .Values.externalDnsNameOrIP}}:30006

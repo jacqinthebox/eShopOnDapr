@@ -10,8 +10,8 @@ data:
   ASPNETCORE_ENVIRONMENT: Development
   ASPNETCORE_URLS: http://0.0.0.0:80
   IdentityUrl: http://identity-api
-  IdentityUrlExternal: {{ .Values.protcol }}://{{ .Values.identityUrlExternal }}
-  SeqServerUrl: {{ .Values.protcol }}://{{ .Values.seqFqdn }}
+  IdentityUrlExternal: {{ .Values.protocol }}://{{ .Values.identityUrlExternal }}
+  SeqServerUrl: {{ .Values.protocol }}://{{ .Values.seqFqdn }}
   # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
   ConnectionStrings__OrderingDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Services.OrderingDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 

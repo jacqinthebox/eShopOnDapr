@@ -1,5 +1,5 @@
 namespace: eshop
-protcol: https
+protocol: https
 apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
