@@ -1,5 +1,5 @@
 variable prefix {
-  default = "mesh01-dev"
+  default = "kube-dev"
 }
 
 
