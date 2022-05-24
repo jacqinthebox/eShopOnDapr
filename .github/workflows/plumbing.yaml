@@ -3,23 +3,9 @@ name: plumbing
 # Only trigger, when the infrastructure deployment succeeded
 on:
   workflow_run:
-    workflows: ["kube-prod-cluster", "kube-dev-cluster"]
+    workflows: ["kube-dev-cluster"]
     types:
       - completed
-      
-    push:
-      branches:
-      - main
-
-      paths:
-      - .github/workflows/plumbing.yml
-    
-    pull_request:
-      branches:
-      - main
-
-      paths:
-      - .github/workflows/plumbing.yml
 
 env:
   ENVIRONMENT: kube-dev #TODO
