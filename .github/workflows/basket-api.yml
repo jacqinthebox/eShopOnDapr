@@ -21,7 +21,7 @@ on:
     - .github/workflows/basket-api.yml
 env:
   SERVICE: basket-api
-  IMAGE: basket.api
+  IMAGE: basket.api:${{ github.sha }}
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
 
@@ -90,14 +90,14 @@ jobs:
         password: ${{ secrets.PASSWORD }}
 
     - name: Compose build ${{ env.SERVICE }}
-      run: sudo -E docker-compose build -t ${{ env.IMAGE }}:${{ github.sha }}  ${{ env.SERVICE }}
+      run: sudo -E docker-compose build ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
-    - name: Compose push ${{ env.IMAGE }}:${{ github.sha }}
-      run: sudo -E docker-compose push ${{ env.IMAGE }}:${{ github.sha }}
+    - name: Compose push ${{ env.SERVICE }}
+      run: sudo -E docker-compose push ${{ env.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
