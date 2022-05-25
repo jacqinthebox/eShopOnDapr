@@ -60,8 +60,3 @@ jobs:
         echo $ | helm repo update
         exho $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
 
-    - name: ingress-controller
-      run: |
-        echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        echo $ | helm repo update
-        exho $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
