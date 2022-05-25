@@ -1,0 +1,152 @@
+name: build-push-deploy
+
+on:
+  workflow_call:
+    inputs:
+      SERVICE:
+        required: true
+        type: string
+      IMAGE_TAG_NAME:
+        required: true
+        type: string
+    secrets:
+      REGISTRY_ENDPOINT:
+        required: true
+      USERNAME:
+        required: true
+      PASSWORD:
+        required: true
+      AZURE_CREDENTIALS:
+        required: true
+ 
+env:
+  DOTNET_VERSION: 6.0.x
+  USE_DOTNET_PREVIEW: true
+  HELM_VERSION_TO_INSTALL: 3.8.0
+  ACR_NAME: demo01cr
+  ACR_REPO_NAME: helm-eshop
+  CHART_VERSION: 1.1 # check if we will use commit sha
+  ENVIRONMENT: kube-dev #TODO
+  ESHOP_NAMESPACE: eshop
+
+jobs:
+  BuildContainersForPR_Linux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@master
+    
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
+
+    - name: Build
+      run: |
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
+        cd src/Services/Basket/Basket.API
+        dotnet build --no-restore
+
+    - name: Compose build ${{ inputs.SERVICE }}
+      run: sudo -E docker-compose build ${{ inputs.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        TAG: ${{ env.BRANCH }}
+        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+
+  BuildLinux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+    - name: 'Checkout Github Action'
+      uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
+
+    - name: Build
+      run: |
+        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
+        cd src/Services/Basket/Basket.API
+        dotnet build --no-restore
+
+    - name: Enable experimental features for the Docker daemon and CLI
+      run: |
+          echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
+          mkdir -p ~/.docker
+          echo $'{\n  "experimental": "enabled"\n}' | sudo tee ~/.docker/config.json
+          sudo service docker restart
+          docker version -f '{{.Client.Experimental}}'
+          docker version -f '{{.Server.Experimental}}'
+
+    - name: Login to Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.REGISTRY_ENDPOINT }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+
+    - name: Compose build ${{ inputs.SERVICE }}
+      run: sudo -E docker-compose build ${{ inputs.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: ${{ github.sha }}
+
+    - name: Compose push ${{ inputs.SERVICE }}
+      run: sudo -E docker-compose push ${{ inputs.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: ${{ github.sha }}
+
+  BuildAndDeployHelmChart:
+    needs: [ BuildContainersForPR_Linux, BuildLinux ]
+    if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
+    name: Publish Helm chart to ACR
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      
+      - name: Install helm
+        uses: Azure/setup-helm@v1
+        # with:
+        #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
+      
+      - name: Login to acr using helm
+        run: |
+          echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+      
+      - name: Save helm chart to local registry
+        run: |
+          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
+            
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+          resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+          cluster-name: ${{ env.ENVIRONMENT }}-cluster
+          
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Publish chart to acr
+        run: |
+          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+
+      - name: Deploy eshop
+        run: |
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
