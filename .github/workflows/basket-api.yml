@@ -22,8 +22,10 @@ on:
     
 jobs:
   call-build-push-deploy-workflow:
-    uses: ./.github/workflows/build-push-deploy.yml
+    uses: ./.github/workflows/app-cicd.yml
     with:
       SERVICE: basket-api
-      IMAGE_TAG_NAME: basketApiImageTag
+      IMAGE_TAG_NAME: basketImageTag
+      BUILD_PATH: "src/Services/Basket/Basket.API"
+      CSPROJ_PATH: "src/Services/Basket/Basket.API/Basket.API.csproj"
     secrets: inherit

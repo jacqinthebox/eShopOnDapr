@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: webshoppingagg
-          image: demo01cr.azurecr.io/webshoppingagg:latest
+          image: demo01cr.azurecr.io/webshoppingagg:{{ .Values.webshoppingaggImageTag }}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

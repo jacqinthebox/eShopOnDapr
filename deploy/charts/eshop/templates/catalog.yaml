@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: catalog-api
-          image: demo01cr.azurecr.io/catalog.api:latest
+          image: demo01cr.azurecr.io/catalog.api:{{ .Values.catalogImageTag }}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

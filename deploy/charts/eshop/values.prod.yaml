@@ -22,3 +22,11 @@ ingress:
     - secretName: blazor-client-tls
       hosts:
         - blazor-client.prod.eshop.boringtestdomain.nl
+
+basketImageTag: latest
+blazorClientImageTag: latest
+catalogImageTag: latest
+identityImageTag: latest
+orderingImageTag: latest
+paymentImageTag: latest
+webshoppingaggImageTag: latest

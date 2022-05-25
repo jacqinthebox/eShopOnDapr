@@ -1,4 +1,4 @@
-name: build-push-deploy
+name: app-cicd
 
 on:
   workflow_call:

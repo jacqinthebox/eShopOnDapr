@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: basket-api
-          image: demo01cr.azurecr.io/basket.api:{{ .Values.basketApiImageTag }}
+          image: demo01cr.azurecr.io/basket.api:{{ .Values.basketImageTag }}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

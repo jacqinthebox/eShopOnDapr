@@ -23,5 +23,10 @@ ingress:
       hosts:
         - blazor-client.eshop.boringtestdomain.nl
 
-
-basketApiImageTag: latest
+basketImageTag: latest
+blazorClientImageTag: latest
+catalogImageTag: latest
+identityImageTag: latest
+orderingImageTag: latest
+paymentImageTag: latest
+webshoppingaggImageTag: latest
