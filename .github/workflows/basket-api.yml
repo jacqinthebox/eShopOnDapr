@@ -110,36 +110,44 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
 
-  BuildHelmChart:
-    name: publish Helm chart to acr
+  BuildAndDeployHelmChart:
+    needs: BuildLinux
+    name: Publish Helm chart to ACR
     runs-on: ubuntu-latest
     environment: prod
     steps:
       - uses: actions/checkout@v2
-        name: checkout repo
+        name: Checkout repo
       
-      - name: install helm
+      - name: Install helm
         uses: Azure/setup-helm@v1
         # with:
         #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
       
-      - name: login to acr using helm
+      - name: Login to acr using helm
         run: |
           echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
       
-      - name: save helm chart to local registry
+      - name: Save helm chart to local registry
         run: |
           helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+          resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+          cluster-name: ${{ env.ENVIRONMENT }}-cluster
+          
       - name: Azure Login
         uses: Azure/login@v1.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: publish chart to acr
+
+      - name: Publish chart to acr
         run: |
           helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
-      - name: deploy eshop
+      - name: Deploy eshop
         run: |
           echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod,basketApiImageTag=${{ github.sha }}
