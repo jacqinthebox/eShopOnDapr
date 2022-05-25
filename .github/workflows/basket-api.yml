@@ -30,6 +30,8 @@ env:
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
   CHART_VERSION: 1.1 # check if we will use commit sha
+  ENVIRONMENT: kube-dev #TODO
+  ESHOP_NAMESPACE: eshop
 
 jobs:
   BuildContainersForPR_Linux:
@@ -111,7 +113,8 @@ jobs:
         TAG: ${{ github.sha }}
 
   BuildAndDeployHelmChart:
-    needs: BuildLinux
+    needs: [ BuildContainersForPR_Linux, BuildLinux ]
+    if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
     name: Publish Helm chart to ACR
     runs-on: ubuntu-latest
     environment: prod
