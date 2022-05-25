@@ -22,7 +22,7 @@ on:
     
 env:
   SERVICE: basket-api
-  IMAGE: basket.api:v0.1
+  IMAGE: basket.api
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
 
@@ -96,6 +96,7 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: ${{ GITHUB_SHA }}
 
     - name: Compose push ${{ env.SERVICE }}
       run: sudo -E docker-compose push ${{ env.SERVICE }}
@@ -103,3 +104,4 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: ${{ GITHUB_SHA }}

@@ -455,3 +455,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+deploy/terraform/environments/kube-prod/.env_ps
+deploy/terraform/environments/kube-prod/.terraform.lock.hcl
+deploy/terraform/environments/kube-prod/private_ssh_key
+deploy/terraform/environments/kube-prod/provider.tf
