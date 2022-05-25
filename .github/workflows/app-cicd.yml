@@ -9,6 +9,12 @@ on:
       IMAGE_TAG_NAME:
         required: true
         type: string
+      BUILD_PATH:
+        required: true
+        type: string
+      CSPROJ_PATH:
+        required: true
+        type: string
     secrets:
       REGISTRY_ENDPOINT:
         required: true
@@ -45,8 +51,8 @@ jobs:
 
     - name: Build
       run: |
-        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
-        cd src/Services/Basket/Basket.API
+        dotnet restore ${{ inputs.CSPROJ_PATH }}
+        cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 
     - name: Compose build ${{ inputs.SERVICE }}
@@ -72,8 +78,8 @@ jobs:
 
     - name: Build
       run: |
-        dotnet restore "src/Services/Basket/Basket.API/Basket.API.csproj"
-        cd src/Services/Basket/Basket.API
+        dotnet restore ${{ inputs.CSPROJ_PATH }}
+        cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 
     - name: Enable experimental features for the Docker daemon and CLI
