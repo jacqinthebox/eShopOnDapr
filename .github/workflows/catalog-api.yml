@@ -28,4 +28,5 @@ jobs:
       IMAGE_TAG_NAME: catalogImageTag
       BUILD_PATH: src/Services/Catalog/Catalog.API
       CSPROJ_FILE: Catalog.API
+      BUILD_DOTNET: true
     secrets: inherit

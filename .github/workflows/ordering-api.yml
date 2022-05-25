@@ -28,4 +28,5 @@ jobs:
       IMAGE_TAG_NAME: orderingImageTag
       BUILD_PATH: src/Services/Ordering/Ordering.API
       CSPROJ_FILE: Ordering.API
+      BUILD_DOTNET: true
     secrets: inherit
