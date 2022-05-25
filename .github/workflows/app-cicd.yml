@@ -12,7 +12,7 @@ on:
       BUILD_PATH:
         required: true
         type: string
-      CSPROJ_PATH:
+      CSPROJ_FILE:
         required: true
         type: string
     secrets:
@@ -51,7 +51,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet restore ${{ inputs.CSPROJ_PATH }}
+        dotnet restore "${{ inputs.BUILD_PATH }}/${{ inputs.CSPROJ_FILE }}.csproj"
         cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 
@@ -78,7 +78,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet restore ${{ inputs.CSPROJ_PATH }}
+        dotnet restore "${{ inputs.BUILD_PATH }}/${{ inputs.CSPROJ_FILE }}.csproj"
         cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 

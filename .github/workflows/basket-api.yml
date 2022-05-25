@@ -26,6 +26,6 @@ jobs:
     with:
       SERVICE: basket-api
       IMAGE_TAG_NAME: basketImageTag
-      BUILD_PATH: "src/Services/Basket/Basket.API"
-      CSPROJ_PATH: "src/Services/Basket/Basket.API/Basket.API.csproj"
+      BUILD_PATH: src/Services/Basket/Basket.API
+      CSPROJ_FILE: Basket.API
     secrets: inherit
