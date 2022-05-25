@@ -37,5 +37,5 @@ jobs:
     
     - name: deploy eshop
       run: |
-        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod
+        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod
 
