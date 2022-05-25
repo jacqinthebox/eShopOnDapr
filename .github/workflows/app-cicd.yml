@@ -34,6 +34,7 @@ env:
   HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
+  CHART_VERSION: v0.1 # will use git tag versioning
   ENVIRONMENT: kube-dev #TODO
   ESHOP_NAMESPACE: eshop
 
@@ -125,14 +126,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Get the git version tag
-        id: get_version
-        run: |
-          echo $ | ::set-output name=VERSION::0.1.0
-        
+      - uses: actions/checkout@v2
+        name: Checkout repo
+      
       - name: Install helm
         uses: Azure/setup-helm@v1
         # with:
@@ -144,7 +140,7 @@ jobs:
       
       - name: Save helm chart to local registry
         run: |
-          helm package deploy/charts/eshop --version ${{ steps.get_version.outputs.VERSION }}
+          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
       - name: Azure Kubernetes set context
         uses: Azure/aks-set-context@v1
@@ -160,8 +156,8 @@ jobs:
 
       - name: Publish chart to acr
         run: |
-          helm push eshopondapr-${{ steps.get_version.outputs.VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ steps.get_version.outputs.VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
