@@ -131,8 +131,7 @@ jobs:
       - name: Get the git version tag
         id: get_version
         run: |
-          echo $ | gitversion=$(git describe)
-          echo $ | ::set-output name=VERSION::$gitversion
+          echo $ | ::set-output name=VERSION::0.1.0
         
       - name: Install helm
         uses: Azure/setup-helm@v1
