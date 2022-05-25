@@ -1,44 +1,41 @@
-# name: deploy-eshop
+name: deploy-eshop
 
-# # Only trigger, when the infrastructure deployment succeeded
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#     - main
+on:
+  workflow_run:
+    workflows: ["helm-ci"]
+    types:
+      - completed
+  #TODO: add check if successfull
 
-#     paths:
-#     - .github/workflows/deploy-eshop.yaml
+env:
+  ENVIRONMENT: kube-dev #TODO
+  ACR_NAME: demo01cr
+  ESHOP_NAMESPACE: eshop
 
-# env:
-#   ENVIRONMENT: kube-dev #TODO
-#   ACR_NAME: demo01cr
-#   ESHOP_NAMESPACE: eshop
+jobs:
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+        resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+        cluster-name: ${{ env.ENVIRONMENT }}-cluster
 
-# jobs:
-#   deploy-to-aks:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Azure Kubernetes set context
-#       uses: Azure/aks-set-context@v1
-#       with:
-#         creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
-#         resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
-#         cluster-name: ${{ env.ENVIRONMENT }}-cluster
+    - name: Helm tool installer
+      uses: Azure/setup-helm@v1
 
-#     - name: Helm tool installer
-#       uses: Azure/setup-helm@v1
+    - name: Azure Login
+      uses: Azure/login@v1.1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-#     - name: Azure Login
-#       uses: Azure/login@v1.1
-#       with:
-#         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-#     - name: login to acr using helm
-#       run: |
-#         echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+    - name: login to acr using helm
+      run: |
+        echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     
-#     - name: deploy eshop
-#       run: |
-#         echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod
+    - name: deploy eshop
+      run: |
+        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod
 

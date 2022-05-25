@@ -1,52 +1,41 @@
-# name: helm-ci
+name: helm-ci
 
-# on:
-#   workflow_dispatch:
-#   push:
-#     branches:
-#     - main
+on:
+  workflow_run:
+    workflows: ["plumbing"]
+    types:
+      - completed
+        #TODO: add check if successfull
 
-#     paths:
-#     - deploy/charts/**
-#     - .github/workflows/helm-ci.yml
-  
-#   pull_request:
-#     branches:
-#     - main
+env:
+  HELM_EXPERIMENTAL_OCI: 1
+  HELM_VERSION_TO_INSTALL: 3.8.0
+  ACR_NAME: demo01cr
+  ACR_REPO_NAME: helm-eshop
+  CHART_VERSION: 1.1 # check if we will use commit sha
 
-#     paths:
-#     - deploy/charts/**
-#     - .github/workflows/helm-ci.yml
-
-# env:
-#   HELM_EXPERIMENTAL_OCI: 1
-#   HELM_VERSION_TO_INSTALL: 3.8.0
-#   ACR_NAME: demo01cr
-#   ACR_REPO_NAME: helm-eshop
-#   CHART_VERSION: 1.1 # check if we will use commit sha
-
-# jobs:
-#   build:
-#     name: publish acr
-#     runs-on: ubuntu-latest
-#     environment: prod
-#     steps:
-#       - uses: actions/checkout@v2
-#         name: checkout repo
+jobs:
+  build:
+    name: publish acr
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout repo
       
-#       - name: install helm
-#         uses: Azure/setup-helm@v1
-#         # with:
-#         #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
+      - name: install helm
+        uses: Azure/setup-helm@v1
+        # with:
+        #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
       
-#       - name: login to acr using helm
-#         run: |
-#           echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+      - name: login to acr using helm
+        run: |
+          echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
       
-#       - name: save helm chart to local registry
-#         run: |
-#           helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
+      - name: save helm chart to local registry
+        run: |
+          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
-#       - name: publish chart to acr
-#         run: |
-#           helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+      - name: publish chart to acr
+        run: |
+          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
