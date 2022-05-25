@@ -126,15 +126,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
 
       - name: Get the git version tag
         id: get_version
         run: |
           echo $ | gitversion=$(git describe --abbrev=0)
           echo $ | ::set-output name=VERSION::$gitversion
-
-      - name: Checkout repo
-        uses: actions/checkout@v2
         
       - name: Install helm
         uses: Azure/setup-helm@v1
