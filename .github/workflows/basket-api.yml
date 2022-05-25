@@ -21,7 +21,7 @@ on:
     - .github/workflows/basket-api.yml
     
 jobs:
-  call-build-push-deploy-workflow:
+  app-cicd:
     uses: ./.github/workflows/app-cicd.yml
     with:
       SERVICE: basket-api
