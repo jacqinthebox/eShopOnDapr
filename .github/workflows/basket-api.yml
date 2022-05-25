@@ -27,7 +27,6 @@ env:
   USE_DOTNET_PREVIEW: true
 
 jobs:
-
   BuildContainersForPR_Linux:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' }}
@@ -105,3 +104,32 @@ jobs:
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
+
+  BuildHelmChart:
+    name: publish Helm chart to acr
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v2
+        name: checkout repo
+      
+      - name: install helm
+        uses: Azure/setup-helm@v1
+        # with:
+        #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
+      
+      - name: login to acr using helm
+        run: |
+          echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+      
+      - name: save helm chart to local registry
+        run: |
+          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
+            
+      - name: publish chart to acr
+        run: |
+          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+
+      - name: deploy eshop
+        run: |
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version 1.1 --set ingress.certManager.environment=prod,basketApiImageTag=${{ github.sha }}

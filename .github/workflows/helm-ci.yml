@@ -1,10 +1,10 @@
 name: helm-ci
 
 on:
-  workflow_run:
-    workflows: ["basket-api", "blazor-client", "catalog-api", "identity-api", "ordering-api", "payment-api", "webshoppingagg", "webshoppingapigw"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["basket-api", "blazor-client", "catalog-api", "identity-api", "ordering-api", "payment-api", "webshoppingagg", "webshoppingapigw"]
+  #   types:
+  #     - completed
   workflow_dispatch:
   push:
     branches:
