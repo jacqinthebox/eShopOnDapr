@@ -10,11 +10,14 @@ on:
         required: true
         type: string
       BUILD_PATH:
-        required: true
+        required: false
         type: string
       CSPROJ_FILE:
-        required: true
+        required: false
         type: string
+      BUILD_DOTNET:
+        required: true
+        type: boolean
     secrets:
       REGISTRY_ENDPOINT:
         required: true
@@ -71,12 +74,14 @@ jobs:
       uses: actions/checkout@master
 
     - name: Setup dotnet
+      if: ${{ inputs.BUILD_DOTNET }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
     - name: Build
+      if: ${{ inputs.BUILD_DOTNET }}
       run: |
         dotnet restore "${{ inputs.BUILD_PATH }}/${{ inputs.CSPROJ_FILE }}.csproj"
         cd ${{ inputs.BUILD_PATH }}
