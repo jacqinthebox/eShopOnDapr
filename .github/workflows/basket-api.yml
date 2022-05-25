@@ -22,7 +22,7 @@ on:
     
 jobs:
   call-build-push-deploy-workflow:
-    uses: ./.github/workflows/build-push-deploy.yaml
+    uses: ./.github/workflows/build-push-deploy.yml
     with:
       SERVICE: basket-api
       IMAGE_TAG_NAME: basketApiImageTag
