@@ -129,7 +129,9 @@ jobs:
 
       - name: Get the git version tag
         id: get_version
-        run: echo ::set-output name=VERSION::$(git describe --abbrev=0)
+        run: |
+          echo $ | gitversion=$(git describe --abbrev=0)
+          echo $ | ::set-output name=VERSION::$gitversion
 
       - name: Checkout repo
         uses: actions/checkout@v2
