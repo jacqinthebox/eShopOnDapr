@@ -131,6 +131,11 @@ jobs:
         run: |
           helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: publish chart to acr
         run: |
           helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
