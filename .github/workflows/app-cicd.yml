@@ -131,7 +131,7 @@ jobs:
       - name: Get the git version tag
         id: get_version
         run: |
-          echo $ | gitversion=$(git describe --abbrev=0)
+          echo $ | gitversion=$(git describe)
           echo $ | ::set-output name=VERSION::$gitversion
         
       - name: Install helm
