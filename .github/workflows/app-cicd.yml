@@ -34,7 +34,6 @@ env:
   HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
-  CHART_VERSION: v0.1 # will use git tag versioning
   ENVIRONMENT: kube-dev #TODO
   ESHOP_NAMESPACE: eshop
 
