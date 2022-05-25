@@ -28,4 +28,5 @@ jobs:
       IMAGE_TAG_NAME: blazorClientImageTag
       BUILD_PATH: src/Web/BlazorClient.Host
       CSPROJ_FILE: BlazorClient.Host
+      BUILD_DOTNET: true
     secrets: inherit
