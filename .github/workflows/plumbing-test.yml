@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  ENVIRONMENT: sandbox #kube-dev #TODO
+  ENVIRONMENT: sandboxb #kube-dev #TODO
   ESHOP_NAMESPACE: eshop
 
 jobs:
