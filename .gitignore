@@ -459,3 +459,6 @@ deploy/terraform/environments/kube-prod/.env_ps
 deploy/terraform/environments/kube-prod/.terraform.lock.hcl
 deploy/terraform/environments/kube-prod/private_ssh_key
 deploy/terraform/environments/kube-prod/provider.tf
+
+private_ssh_key
+.terraform.lock.hcl

@@ -14,6 +14,17 @@ variable "resource_group_name" {
   default = null
 }
 
+variable "sql_aad_admin_login_username" {
+  description = "Required. The aad admin user name, or the display name of the managed identity"
+}
+
+variable "sql_aad_admin_object_id" {
+  default = "Required. The object id (principal id) of the aad admin user or managed identity"
+}
+variable "sa_administrator_login" {
+  default = "Required. The sa admin login."
+}
+
 variable "tags" {}
 
 variable "vnet_rule_subnet_id" {}
@@ -49,16 +60,17 @@ variable "databases" {
   ]
 }
 
-variable "identity" {
-  default = "UserAssigned"
+
+variable "identity_type" {
+  default = "SystemAssigned"
   type = string
-  description = "MSI type"
+  description = "Required. SystemAssigned or UserAssigned. MSI type"
 }
 
-variable "ids" {
+variable "identity_ids" {
   default = null
   type = list
-  description = "Identities list"
+  description = "identities list. Required when type us set to UserAssigned"
 }
 
 /*license_type - (Optional) Specifies the license type applied to this database. Possible values are LicenseIncluded and BasePrice.*/

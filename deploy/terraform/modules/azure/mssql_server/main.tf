@@ -1,17 +1,28 @@
+resource "random_password" "sa_password" {
+  length = 32
+  special = true
+}
+
 resource "azurerm_mssql_server" "server" {
   name                         = var.sql_server_name == null ? "${var.prefix}-sqlsrv" : var.sql_server_name
   location                     = var.location
   resource_group_name          = var.resource_group_name
   version                      = var.sql_version
   tags  = var.tags
+
   identity {
-    type = "SystemAssigned"
+    type = var.identity_type
+    identity_ids = var.identity_type == "UserAssigned" ? var.identity_ids : null
   }
+
   azuread_administrator {
-    login_username = "sql-admin"
-    object_id = "50e73168-0654-41b3-ba63-cf08fa5b3e33"
-    azuread_authentication_only = true
-    }
+    login_username = var.sql_aad_admin_login_username
+    object_id = var.sql_aad_admin_object_id
+    azuread_authentication_only = false
+  }
+
+  administrator_login          = var.sa_administrator_login == null ? "${var.prefix}-dbadmin" : var.sa_administrator_login
+  administrator_login_password = random_password.sa_password.result
 }
 
 //allow the kube subnet

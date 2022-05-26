@@ -1,6 +1,12 @@
-resource "null_resource" "aks_registration_preview" {
+resource "null_resource" "register_az_features" {
   provisioner "local-exec" {
-    command = "az feature register --namespace Microsoft.ContainerService -n AutoUpgradePreview"
+    command = <<EOT
+      az feature register --namespace Microsoft.ContainerService -n AutoUpgradePreview
+      az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+      az provider register --name Microsoft.ContainerService
+      az extension add --name aks-preview
+      az extension update --name aks-preview
+    EOT
   }
 }
 
@@ -135,4 +141,16 @@ resource "azurerm_role_assignment" "acr_role" {
   role_definition_name             = "AcrPull"
   scope                            = var.azurerm_container_registry_id
   skip_service_principal_aad_check = true
+}
+
+resource "null_resource" "enable-pod-identity" {
+  provisioner "local-exec" {
+    command = <<EOT
+      az aks get-credentials -n ${azurerm_kubernetes_cluster.kube.name} -g ${azurerm_kubernetes_cluster.kube.resource_group_name} --admin
+      az aks update -n ${azurerm_kubernetes_cluster.kube.name} -g ${azurerm_kubernetes_cluster.kube.resource_group_name} --enable-pod-identity
+    EOT
+  }
+  depends_on = [
+    azurerm_kubernetes_cluster.kube
+  ]
 }

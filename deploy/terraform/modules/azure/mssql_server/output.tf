@@ -9,3 +9,14 @@ output "sql_msi_principal_id" {
   value       = azurerm_mssql_server.server.identity.0.principal_id
 }
 
+output "sql_server_sa_password" {
+  description = "The sqlserver sa password"
+  sensitive = true
+  value       = azurerm_mssql_server.server.administrator_login_password
+}
+
+output "sql_server_sa_login" {
+  description = "The sqlserver sa password"
+  sensitive = true
+  value       = azurerm_mssql_server.server.administrator_login
+}
