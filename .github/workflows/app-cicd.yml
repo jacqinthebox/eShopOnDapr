@@ -34,7 +34,6 @@ env:
   HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
-  CHART_VERSION: 0.1.0 # will use git tag versioning
   ENVIRONMENT: kube-dev #TODO
   ESHOP_NAMESPACE: eshop
 
@@ -109,15 +108,22 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: ${{ github.sha }}
 
-    - name: Compose push ${{ inputs.SERVICE }}
+    - name: Compose push ${{ inputs.SERVICE }}:${{ github.sha }}
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
+
+    - name: Compose push ${{ inputs.SERVICE }}:latest
+      run: sudo -E docker-compose push ${{ inputs.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: latest
 
   BuildAndDeployHelmChart:
     needs: [ BuildContainersForPR_Linux, BuildLinux ]
@@ -145,7 +151,7 @@ jobs:
       
       - name: Save helm chart to local registry
         run: |
-          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
+          helm package deploy/charts/eshop --version $NBGV_SemVer2
             
       - name: Azure Kubernetes set context
         uses: Azure/aks-set-context@v1
@@ -161,8 +167,8 @@ jobs:
 
       - name: Publish chart to acr
         run: |
-          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+          helm push eshopondapr-$NBGV_SemVer2.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
