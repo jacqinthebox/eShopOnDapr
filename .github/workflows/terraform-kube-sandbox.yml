@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  terraform-kube-deplpy:
+  terraform-kube-deploy:
     uses: ./.github/workflows/terraform-kube-deploy.yml
     with:
       PREFIX: kube-sandbox
