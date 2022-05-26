@@ -140,7 +140,7 @@ jobs:
       
       - name: Save helm chart to local registry
         run: |
-          helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
+          helm package deploy/service-charts/${{ inputs.SERVICE }} --version ${{ env.CHART_VERSION }}
             
       - name: Azure Kubernetes set context
         uses: Azure/aks-set-context@v1
@@ -156,8 +156,8 @@ jobs:
 
       - name: Publish chart to acr
         run: |
-          helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+          helm push ${{ inputs.SERVICE }}-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/${{ inputs.SERVICE }} --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,imageTag=${{ github.sha }}
