@@ -154,10 +154,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Publish chart to acr
+      - name: Publish ${{ inputs.SERVICE }} chart to acr
         run: |
           helm push ${{ inputs.SERVICE }}-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
-      - name: Deploy eshop
+      - name: Deploy ${{ inputs.SERVICE }}
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/${{ inputs.SERVICE }} --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,imageTag=${{ github.sha }}
+          echo $ | helm upgrade --install ${{ inputs.SERVICE }} oci://demo01cr.azurecr.io/helm/${{ inputs.SERVICE }} --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,imageTag=${{ github.sha }}
