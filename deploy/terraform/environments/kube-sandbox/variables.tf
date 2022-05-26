@@ -1,5 +1,5 @@
 variable prefix {
-  default = "sandbox"
+  default = "sandbox01"
 }
 
 variable "api_server_authorized_ip_ranges" {
