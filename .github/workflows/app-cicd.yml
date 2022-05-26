@@ -108,6 +108,7 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: ${{ github.sha }}
 
     - name: Compose push ${{ inputs.SERVICE }}:${{ github.sha }}
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
@@ -116,6 +117,14 @@ jobs:
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
+
+    - name: Compose build ${{ inputs.SERVICE }}:latest
+      run: sudo -E docker-compose build ${{ inputs.SERVICE }}
+      working-directory: ./src
+      shell: bash
+      env:
+        REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
+        TAG: latest
 
     - name: Compose push ${{ inputs.SERVICE }}:latest
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
