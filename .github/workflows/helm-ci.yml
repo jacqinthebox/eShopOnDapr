@@ -13,7 +13,7 @@ on:
     - feature/*
 
     paths:
-    - .github/workflows/helm-ci.yaml
+    - .github/workflows/helm-ci.yml
 
 env:
   HELM_EXPERIMENTAL_OCI: 1
