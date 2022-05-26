@@ -31,7 +31,6 @@ on:
 env:
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
-  HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
   ACR_REPO_NAME: helm-eshop
   ENVIRONMENT: kube-dev #TODO
@@ -150,8 +149,6 @@ jobs:
 
       - name: Install helm
         uses: Azure/setup-helm@v1
-        with:
-          version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
       
       - name: Login to acr using helm
         run: |
