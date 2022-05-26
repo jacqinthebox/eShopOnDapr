@@ -6,13 +6,6 @@ on:
     workflows: ["kube-dev-cluster"]
     types:
       - completed
-  workflow_dispatch:
-  push:
-    branches:
-    - main
-
-    paths:
-    - .github/workflows/plumbing.yaml
 
 env:
   ENVIRONMENT: kube-dev #TODO
@@ -21,6 +14,7 @@ env:
 jobs:
   config-aks:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v1

@@ -5,16 +5,7 @@ on:
     workflows: ["helm-ci"]
     types:
       - completed
-  #TODO: add check if successfull
-  workflow_dispatch:
-  push:
-    branches:
-    - main
-    - feature/*
-
-    paths:
-    - .github/workflows/deploy-eshop-latest.yml
-    
+      
 env:
   ENVIRONMENT: kube-dev #TODO
   ACR_NAME: demo01cr
@@ -24,6 +15,7 @@ env:
 jobs:
   deploy-to-aks:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v1

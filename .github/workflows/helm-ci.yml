@@ -6,15 +6,6 @@ on:
     types:
       - completed
         #TODO: add check if successfull
-  workflow_dispatch:
-  push:
-    branches:
-    - main
-    - feature/*
-
-    paths:
-    - .github/workflows/helm-ci.yml
-
 env:
   HELM_EXPERIMENTAL_OCI: 1
   HELM_VERSION_TO_INSTALL: 3.8.0
@@ -23,8 +14,9 @@ env:
   CHART_VERSION: 1.1 # check if we will use commit sha
 
 jobs:
-  build:
+  push-helm-chart:
     name: publish acr
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: prod
     steps:
