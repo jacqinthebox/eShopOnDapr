@@ -1,4 +1,4 @@
-name: kube-demo
+name: kube-sandbox
 
 on:
   workflow_dispatch:
@@ -7,6 +7,6 @@ jobs:
   terraform-kube-deplpy:
     uses: ./.github/workflows/terraform-kube-deploy.yml
     with:
-      PREFIX: kube-demo
+      PREFIX: kube-sandbox
       TF_COMMAND: apply
     secrets: inherit

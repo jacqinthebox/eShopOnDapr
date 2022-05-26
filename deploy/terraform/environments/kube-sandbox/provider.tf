@@ -15,7 +15,7 @@ provider "azurerm" {
     }
   }
 }
-/*
+
 terraform {
   backend "azurerm" {
     resource_group_name  = var.backend_resource_group_name
@@ -24,4 +24,4 @@ terraform {
     key                  = var.backend_key
   }
 }
-*/
+
