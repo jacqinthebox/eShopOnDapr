@@ -6,11 +6,20 @@ on:
     types:
       - completed
   #TODO: add check if successfull
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - feature/*
 
+    paths:
+    - .github/workflows/deploy-eshop-latest.yml
+    
 env:
   ENVIRONMENT: kube-dev #TODO
   ACR_NAME: demo01cr
   ESHOP_NAMESPACE: eshop
+  CHART_VERSION: 1.1 # check if we will use commit sha
 
 jobs:
   deploy-to-aks:
