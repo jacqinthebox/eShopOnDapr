@@ -102,7 +102,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
 
-    - name: Compose build ${{ inputs.SERVICE }}
+    - name: Compose build ${{ inputs.SERVICE }}:${{ github.sha }}
       run: sudo -E docker-compose build ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -147,7 +147,6 @@ jobs:
       - uses: dotnet/nbgv@master
         with:
           setAllVars: true
-      - run: echo "NBGV_SemVer2 $NBGV_SemVer2"
 
       - name: Install helm
         uses: Azure/setup-helm@v1

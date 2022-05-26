@@ -41,7 +41,7 @@ spec:
       containers:
         - name: payment-api
           image: demo01cr.azurecr.io/payment.api:{{ .Values.paymentImageTag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 80
