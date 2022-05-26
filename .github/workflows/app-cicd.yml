@@ -150,8 +150,8 @@ jobs:
 
       - name: Install helm
         uses: Azure/setup-helm@v1
-        # with:
-        #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
+        with:
+          version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
       
       - name: Login to acr using helm
         run: |
@@ -164,7 +164,7 @@ jobs:
       - name: Azure Kubernetes set context
         uses: Azure/aks-set-context@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
           cluster-name: ${{ env.ENVIRONMENT }}-cluster
           
