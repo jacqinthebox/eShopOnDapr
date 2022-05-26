@@ -43,7 +43,7 @@ spec:
       containers:
         - name: catalog-api
           image: demo01cr.azurecr.io/catalog.api:{{ .Values.catalogImageTag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               protocol: TCP

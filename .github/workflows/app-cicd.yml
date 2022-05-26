@@ -120,7 +120,7 @@ jobs:
         TAG: ${{ github.sha }}
 
   BuildAndDeployHelmChart:
-    needs: [ BuildContainersForPR_Linux, BuildLinux ]
+    needs: [ BuildLinux ]
     if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
     name: Publish Helm chart to ACR
     runs-on: ubuntu-latest
@@ -160,4 +160,4 @@ jobs:
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=latest

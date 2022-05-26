@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - main
+    - develop
+    - feature/*
+    - bugfix/*
 
     paths:
     - src/BuildingBlocks/**
