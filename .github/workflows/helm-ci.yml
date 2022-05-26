@@ -6,6 +6,14 @@ on:
     types:
       - completed
         #TODO: add check if successfull
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - feature/*
+
+    paths:
+    - .github/workflows/helm-ci.yaml
 
 env:
   HELM_EXPERIMENTAL_OCI: 1
