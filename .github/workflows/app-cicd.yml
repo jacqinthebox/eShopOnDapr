@@ -126,9 +126,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
         name: Checkout repo
       
+      - uses: dotnet/nbgv@master
+        with:
+          setAllVars: true
+      - run: echo "NBGV_SemVer2 $NBGV_SemVer2"
+
       - name: Install helm
         uses: Azure/setup-helm@v1
         # with:
