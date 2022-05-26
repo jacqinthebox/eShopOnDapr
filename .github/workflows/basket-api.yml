@@ -10,6 +10,7 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Services/Basket/**
+    - deploy/service-charts/basket-api/**
     - .github/workflows/basket-api.yml
     - .github/workflows/app-cicd.yml
   
