@@ -8,7 +8,7 @@ env:
   ESHOP_NAMESPACE: eshop
   HOST_NAME: dev.eshop
   DOMAIN_NAME: luthorcorp.nl
-  DNS_RESOURCEGROUP: demo01.rg
+  DNS_RESOURCEGROUP: demo01-rg
 
 jobs:
   aks-plumbing:
