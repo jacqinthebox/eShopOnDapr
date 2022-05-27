@@ -49,3 +49,7 @@ output "user-assigned_identity_sql_principal_id" {
 output "user-assigned_identity_sql_client_id" {
   value = module.sql_server_user_assigned_identity.client_id
 }
+
+output "kube_cluster_node_pool" {
+  value = module.kube_nodepools.nodepools
+}

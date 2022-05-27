@@ -167,3 +167,16 @@ resource "azurerm_key_vault_secret" "sql_sa_admin_password" {
   key_vault_id = module.vault.vault_id
 }
 
+
+resource "null_resource" "enable-pod-identity" {
+  provisioner "local-exec" {
+    command = <<EOT
+    az extension update --name aks-preview
+    az aks get-credentials -n ${module.kube.kube_cluster_name} -g ${module.kube.kube_cluster_resource_group} --admin
+    az aks update -n ${module.kube.kube_cluster_name} -g ${module.kube.kube_cluster_resource_group} --enable-pod-identity
+    EOT
+  }
+  depends_on = [
+    module.kube_nodepools.nodepools
+  ]
+}

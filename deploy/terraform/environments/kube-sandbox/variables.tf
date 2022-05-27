@@ -1,5 +1,5 @@
 variable prefix {
-  default = "sandbox-one"
+  default = "kube-sbx-a"
 }
 
 variable "api_server_authorized_ip_ranges" {

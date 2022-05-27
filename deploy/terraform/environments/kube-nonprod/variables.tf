@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-nonprod-one"
+  default = "kube-npd-a"
 }
 
 variable "api_server_authorized_ip_ranges" {
