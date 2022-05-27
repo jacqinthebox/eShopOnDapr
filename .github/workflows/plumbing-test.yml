@@ -83,4 +83,5 @@ jobs:
         LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress kube-sbx-a-ingress-nginx-controller  | awk {'print $4'} | tail -1)
         echo $LOADBALANCER_IP
         az account set --subscription demo01
-        az network dns record-set a add-record --resource-group demo01-rg --zone-name luthorcorp.nl --record-set-name eshop --ipv4-address $LOADBALANCER_IP
+        #az network dns record-set a add-record --resource-group  --zone-name luthorcorp.nl --record-set-name eshop --ipv4-address $LOADBALANCER_IP
+        az network dns record-set a create --resource-group demo01-rg --zone-name luthorcorp.nl --name eshop --ttl 60
