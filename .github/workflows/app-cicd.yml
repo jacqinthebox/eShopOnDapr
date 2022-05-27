@@ -32,9 +32,7 @@ env:
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
   ACR_NAME: demo01cr
-  ACR_REPO_NAME: helm-eshop
   ENVIRONMENT: kube-dev #TODO
-  ESHOP_NAMESPACE: eshop
 
 jobs:
   BuildContainersForPR_Linux:
