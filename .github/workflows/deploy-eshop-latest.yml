@@ -1,13 +1,13 @@
 name: deploy-eshop
 
 on:
-  workflow_run:
-    workflows: ["helm-ci"]
-    types:
-      - completed
-      
+  #workflow_run:
+  #  workflows: ["helm-ci"]
+  #  types:
+  #    - completed
+  workflow_dispatch:
 env:
-  ENVIRONMENT: kube-dev #TODO
+  ENVIRONMENT: kube-sbx-a #TODO
   ACR_NAME: demo01cr
   ESHOP_NAMESPACE: eshop
   CHART_VERSION: 1.1 # check if we will use commit sha
@@ -38,5 +38,5 @@ jobs:
     
     - name: deploy eshop
       run: |
-        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod
+        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=staging
 
