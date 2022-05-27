@@ -5,8 +5,9 @@ on:
 
 env:
   ENVIRONMENT: kube-sbx-a #kube-dev #this is the cluster prefix #TODO
+  ENV_SHORT: sbx #e.g. dev, tst, prd
   ESHOP_NAMESPACE: eshop
-  HOST_NAME: dev.eshop
+  HOST_NAME: sbx.eshop
   DOMAIN_NAME: luthorcorp.nl
   DNS_RESOURCEGROUP: demo01-rg
 
@@ -90,5 +91,5 @@ jobs:
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana --ipv4-address $LOADBALANCER_IP --ttl 60
-        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
