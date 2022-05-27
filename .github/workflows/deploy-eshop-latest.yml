@@ -9,8 +9,7 @@ on:
 env:
   ENVIRONMENT: kube-dev #TODO
   ACR_NAME: demo01cr
-  ESHOP_NAMESPACE: eshop
-  CHART_VERSION: 1.1 # check if we will use commit sha
+  CHART_VERSION: 1.0.0-latest # use hardcoded latest version by initial rollout
 
 jobs:
   deploy-to-aks:

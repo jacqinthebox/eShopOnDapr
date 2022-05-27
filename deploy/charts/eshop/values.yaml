@@ -10,18 +10,18 @@ sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.Ident
 ingress:
   forceSSLRedirect: false
   certManager:
-    enabled: true
+    enabled: false
     environment: staging
-  tls:
-    - secretName: webshopping-gw-tls
-      hosts:
-        - webshopping-gw.eshop.boringtestdomain.nl
-    - secretName: identity-api-tls
-      hosts:
-        - identity-api.eshop.boringtestdomain.nl
-    - secretName: blazor-client-tls
-      hosts:
-        - blazor-client.eshop.boringtestdomain.nl
+  tls: {}
+    # - secretName: webshopping-gw-tls
+    #   hosts:
+    #     - webshopping-gw.eshop.boringtestdomain.nl
+    # - secretName: identity-api-tls
+    #   hosts:
+    #     - identity-api.eshop.boringtestdomain.nl
+    # - secretName: blazor-client-tls
+    #   hosts:
+    #     - blazor-client.eshop.boringtestdomain.nl
 
 basketImageTag: latest
 blazorClientImageTag: latest
