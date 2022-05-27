@@ -67,13 +67,13 @@ jobs:
         echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
 
     - name: add prometheus
-      run:
+      run: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo update
         helm install prometheus prometheus-community/prometheus
 
     - name: add grafana
-      run:
+      run: |
         helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
         helm install grafana grafana/grafana
