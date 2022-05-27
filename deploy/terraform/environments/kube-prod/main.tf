@@ -2,11 +2,13 @@ data "azurerm_kubernetes_service_versions" "current" {
   location = "East US"
 }
 
+data "azurerm_subscription" "primary" {
+}
+
 //using locals because interpolation would work
 locals {
   common_tags = {
     environment = "prod"
-    creation_date = formatdate("YYYY-MM-DD", timestamp())
   }
 }
 
@@ -53,6 +55,9 @@ module "mssql_server" {
   tags = local.common_tags
   prefix = var.prefix
   resource_group_name = module.kube-group.name
+  sa_administrator_login = var.sa_administrator_login
+  sql_aad_admin_object_id = module.sql_server_user_assigned_identity.principal_id
+  sql_aad_admin_login_username = module.sql_server_user_assigned_identity.identity_name
 }
 
 module "service_bus" {
@@ -61,8 +66,11 @@ module "service_bus" {
   tags                = local.common_tags
   location = var.location
   prefix = var.prefix
-}
+  servicebus_namespace_name = null
+  servicebus_namespace_identity_type = "SystemAssigned"
+  }
 
+/*
 module "cosmosdb" {
   source = "../../modules/azure/cosmosdb"
   location = var.location
@@ -70,7 +78,7 @@ module "cosmosdb" {
   tags = local.common_tags
   prefix = var.prefix
 }
-
+*/
 
 module "kube" {
   source                          = "../../modules/azure/aks"
@@ -105,13 +113,6 @@ module "kube_nodepools" {
   orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
 }
 
-module "key_vault_identity" {
-  source = "../../modules/azure/user_assigned_identity"
-  location = module.kube.kube_cluster_location
-  identity_name = "key-vault-identity"
-  identity_resourcegroup_name = module.kube.kube_cluster_node_group
-}
-
 module "aad_pod_identity" {
   source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
@@ -119,16 +120,50 @@ module "aad_pod_identity" {
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
 
-module "cosmos_pod_identity" {
+module "keda_user_assigned_pod_identity" {
   source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
-  identity_name = "cosmos-identity"
+  identity_name = "keda-identity"
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
 
-module "service_bus_pod_identity" {
+module "cosmosdb_user_assigned_identity" {
+  source = "../../modules/azure/user_assigned_identity"
+  location = module.kube.kube_cluster_location
+  identity_name = "cosmosdb-identity"
+  identity_resourcegroup_name = module.kube.kube_cluster_node_group
+}
+
+module "service_bus_user_assigned_identity" {
   source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
   identity_name = "service-bus-identity"
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
+
+module "sql_server_user_assigned_identity" {
+  source = "../../modules/azure/user_assigned_identity"
+  location = module.kube.kube_cluster_location
+  identity_name = "sql-server-identity"
+  identity_resourcegroup_name = module.kube.kube_cluster_node_group
+}
+
+module "key_vault_user_assigned_identity" {
+  source = "../../modules/azure/user_assigned_identity"
+  location = module.kube.kube_cluster_location
+  identity_name = "key-vault-identity"
+  identity_resourcegroup_name = module.kube.kube_cluster_node_group
+}
+
+resource "azurerm_role_assignment" "service_bus_identity_assignment" {
+  scope                = module.service_bus.servicebus_namespace_id
+  role_definition_name = "Azure Service Bus Data Owner"
+  principal_id         = module.service_bus_user_assigned_identity.principal_id
+}
+
+resource "azurerm_key_vault_secret" "sql_sa_admin_password" {
+  name         = module.mssql_server.sql_server_sa_login
+  value        = module.mssql_server.sql_server_sa_password
+  key_vault_id = module.vault.vault_id
+}
+

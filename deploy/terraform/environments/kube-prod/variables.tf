@@ -1,9 +1,5 @@
 variable prefix {
-  default = "kube-prod"
-}
-
-variable "acr_name" {
-  default = "kubedemo2022"
+  default = "kube-prod-one"
 }
 
 variable "api_server_authorized_ip_ranges" {
@@ -27,18 +23,22 @@ variable "sql_firewall_rules" {
   default = [{ name : "office_hq", start_ip_address = "1.2.3.4", end_ip_address= "1.2.3.4" },]
 }
 
+variable "sa_administrator_login" {
+  default = null
+}
+
 variable "vnet_address_space" {
-  default = ["10.22.0.0/16"]
+  default = ["10.24.0.0/16"]
 }
 
 variable "subnets" {
   default = {
     kube-subnet = {
-      address_prefixes  = ["10.22.32.0/19"]
-      service_endpoints = ["Microsoft.AzureCosmosDB", "Microsoft.Sql"]
+      address_prefixes  = ["10.24.32.0/19"]
+      service_endpoints = ["Microsoft.AzureCosmosDB", "Microsoft.Sql", "Microsoft.KeyVault", "Microsoft.ServiceBus","Microsoft.ContainerRegistry"]
     },
     generic-subnet = {
-      address_prefixes  = ["10.22.0.0/24"]
+      address_prefixes  = ["10.23.0.0/24"]
       service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
     }
   }
@@ -59,7 +59,7 @@ variable "additional_nodepools" {
       vm_size            = "Standard_B2ms"
       #"Standard_E2_v4" #Standard_B4ms "Standard_D2s_v3" "Standard_B2ms"
       availability_zones = ["1", "2", "3"]
-      taints             = ["sku=compute:NoSchedule"]
+      taints             = []#["sku=compute:NoSchedule"]
       labels             = {
         load : "computeOptimized"
       }
