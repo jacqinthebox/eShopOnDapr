@@ -6,6 +6,9 @@ on:
 env:
   ENVIRONMENT: kube-sbx-a #kube-dev #this is the cluster prefix #TODO
   ESHOP_NAMESPACE: eshop
+  HOST_NAME: dev.eshop
+  DOMAIN_NAME: luthorcorp.nl
+  DNS_RESOURCEGROUP: demo01.rg
 
 jobs:
   aks-plumbing:
@@ -83,5 +86,8 @@ jobs:
         LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress kube-sbx-a-ingress-nginx-controller  | awk {'print $4'} | tail -1)
         echo $LOADBALANCER_IP
         az account set --subscription demo01
-        #az network dns record-set a add-record --resource-group  --zone-name luthorcorp.nl --record-set-name eshop --ipv4-address $LOADBALANCER_IP
-        az network dns record-set a create --resource-group demo01-rg --zone-name luthorcorp.nl --name eshop --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name blazor-client.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name m.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
