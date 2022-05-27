@@ -78,7 +78,9 @@ jobs:
         helm repo update
         helm upgrade --install grafana grafana/grafana --namespace monitoring
 
-    - name: add dns
+    - name: add dns records
       run: |
         LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress kube-sbx-a-ingress-nginx-controller  | awk {'print $4'} | tail -1)
         echo $LOADBALANCER_IP
+        az account set --subsccription demo01
+        az network dns record-set a add-record --resource-group demo01-rg --zone-name luthorcorp.nl --record-set-name eshop --ipv4-address $LOADBALANCER_IP
