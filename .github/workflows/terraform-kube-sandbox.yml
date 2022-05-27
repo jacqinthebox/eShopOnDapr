@@ -1,4 +1,4 @@
-name: kube-sandbox
+name: kube-sandbox-cluster
 on:
   workflow_dispatch:
     inputs:
