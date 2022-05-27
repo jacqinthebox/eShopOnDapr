@@ -1,5 +1,5 @@
 variable prefix {
-  default = "sandboxb"
+  default = "sandbox-one"
 }
 
 variable "api_server_authorized_ip_ranges" {
@@ -56,7 +56,7 @@ variable "additional_nodepools" {
       node_count         = 1
       name               = "compute"
       mode               = "User"
-      vm_size            = "Standard_D2s_v3"
+      vm_size            = "Standard_B2ms"
       #"Standard_E2_v4" #Standard_B4ms "Standard_D2s_v3" "Standard_B2ms"
       availability_zones = ["1", "2", "3"]
       taints             = []#["sku=compute:NoSchedule"]
