@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  ENVIRONMENT: sandboxb #kube-dev #TODO
+  ENVIRONMENT: sandbox-one #kube-dev #TODO
   ESHOP_NAMESPACE: eshop
 
 jobs:
@@ -36,11 +36,14 @@ jobs:
       run: |
         helm repo add dapr https://dapr.github.io/helm-charts/ && helm repo update
         helm upgrade --install dapr dapr/dapr --namespace dapr-system --create-namespace --wait
-          
+
+    - name: eshop namespaces
+      run: |
+        echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
     - name: cert-manager
       run: |
         echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
-        echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
         echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
         echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
 
@@ -48,14 +51,14 @@ jobs:
       run: |
         echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         echo $ | helm repo update
-        exho $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
+        echo $ | helm upgrade --install eshop-new ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
 
 
     - name: add pod identities
       run: |
-        az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
-        az extension add --name aks-preview && az extension update --name aks-preview
-        SQL_RESOURCEID=$(az identity show --name sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg   --query id -o tsv)
-        az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $SQL_RESOURCEID
-        SB_RESOURCEID=$(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-        az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $SB_RESOURCEID
+        echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+        echo $ | az extension add --name aks-preview && az extension update --name aks-preview
+        echo $ | SQL_RESOURCEID=$(az identity show --name sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg   --query id -o tsv)
+        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $SQL_RESOURCEID
+        echo $ | SB_RESOURCEID=$(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $SB_RESOURCEID
