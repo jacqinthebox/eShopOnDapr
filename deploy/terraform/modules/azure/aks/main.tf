@@ -146,8 +146,6 @@ resource "azurerm_role_assignment" "acr_role" {
 resource "null_resource" "enable-pod-identity" {
   provisioner "local-exec" {
     command = <<EOT
-    az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
-    az extension add --name aks-preview
     az extension update --name aks-preview
     az aks get-credentials -n ${azurerm_kubernetes_cluster.kube.name} -g ${azurerm_kubernetes_cluster.kube.resource_group_name} --admin
     az aks update -n ${azurerm_kubernetes_cluster.kube.name} -g ${azurerm_kubernetes_cluster.kube.resource_group_name} --enable-pod-identity
