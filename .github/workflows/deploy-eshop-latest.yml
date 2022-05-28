@@ -1,11 +1,16 @@
 name: deploy-eshop
 
-on:
+#on:
   #workflow_run:
   #  workflows: ["helm-ci"]
   #  types:
   #    - completed
+on:
   workflow_dispatch:
+  push:
+    branches:
+      main
+
 env:
   ENVIRONMENT: kube-sbx-a #TODO
   ACR_NAME: demo01cr
