@@ -92,5 +92,4 @@ jobs:
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
-        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name monitoring.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
