@@ -2,6 +2,9 @@ name: plumbing-test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      main
 
 env:
   ENVIRONMENT: kube-sbx-a #kube-dev #this is the cluster prefix #TODO
