@@ -1,5 +1,5 @@
 data "azurerm_kubernetes_service_versions" "current" {
-  location = "East US"
+  location = var.location
 }
 
 data "azurerm_subscription" "primary" {
@@ -8,7 +8,8 @@ data "azurerm_subscription" "primary" {
 //using locals because interpolation would work
 locals {
   common_tags = {
-    environment = "sandbox"
+    prefix = var.prefix
+    #creation_date = formatdate("YYYY-MM-DD", timestamp())
   }
 }
 
@@ -45,7 +46,6 @@ module "vnet" {
   prefix              = var.prefix
 }
 
-
 module "mssql_server" {
   source = "../../modules/azure/mssql_server"
   location            = var.location
@@ -56,8 +56,10 @@ module "mssql_server" {
   prefix = var.prefix
   resource_group_name = module.kube-group.name
   sa_administrator_login = var.sa_administrator_login
-  sql_aad_admin_object_id = module.sql_server_user_assigned_identity.principal_id
-  sql_aad_admin_login_username = module.sql_server_user_assigned_identity.identity_name
+  #sql_aad_admin_object_id = module.sql_server_user_assigned_identity.principal_id
+  #sql_aad_admin_login_username = module.sql_server_user_assigned_identity.identity_name
+  sql_aad_admin_object_id = var.sql_aad_admin_object_id
+  sql_aad_admin_login_username = var.sql_aad_admin_login_username
 }
 
 module "service_bus" {
@@ -94,14 +96,14 @@ module "kube" {
   loganalytics_workspace_id = module.loganalytics.log_analytics_workspace_id
   default_node_pool_name = "systempool"
   vnet_subnet_id = module.vnet.subnet_ids["kube-subnet"]
-  api_server_authorized_ip_ranges  = var.api_server_authorized_ip_ranges
+  api_server_authorized_ip_ranges  = []
   default_node_pool_vnet_subnet_id = module.vnet.subnet_ids["kube-subnet"]
   node_resource_group              = "${var.prefix}-nodes-rg"
   admin_group_object_ids = var.admin_group_object_ids
   tenant_id = var.tenant_id
   local_account_disabled = false
   http_application_routing_enabled = false
-  azurerm_container_registry_id = "/subscriptions/e267d216-a7aa-42e4-905a-f18316a144c4/resourceGroups/demo01-rg/providers/Microsoft.ContainerRegistry/registries/demo01cr"
+  azurerm_container_registry_id = var.acr_id
   azurerm_container_registry_enabled = true
 }
 

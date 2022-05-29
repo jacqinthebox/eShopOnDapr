@@ -2,12 +2,14 @@ variable prefix {
   default = "kube-npd-a"
 }
 
-variable "api_server_authorized_ip_ranges" {
-  default = []
-}
+variable "tenant_id" {} #will be set from environment variable
 
 variable "location" {
   default = "East US" #"westeurope"
+}
+
+variable "acr_id" {
+  default = "/subscriptions/e267d216-a7aa-42e4-905a-f18316a144c4/resourceGroups/demo01-rg/providers/Microsoft.ContainerRegistry/registries/demo01cr"
 }
 
 variable "databases" {
@@ -23,28 +25,34 @@ variable "sql_firewall_rules" {
   default = [{ name : "office_hq", start_ip_address = "1.2.3.4", end_ip_address= "1.2.3.4" },]
 }
 
+# this is set via environment variable in Github Actions
 variable "sa_administrator_login" {
   default = null
 }
 
+variable "sql_aad_admin_object_id" {
+  default = "e1ad18a1-95ec-4cc4-8eb4-61a6aeecff1f"
+}
+variable "sql_aad_admin_login_username" {
+  default = "aks-admins"
+}
+
 variable "vnet_address_space" {
-  default = ["10.23.0.0/16"]
+  default = ["10.24.0.0/16"]
 }
 
 variable "subnets" {
   default = {
     kube-subnet = {
-      address_prefixes  = ["10.23.32.0/19"]
+      address_prefixes  = ["10.24.32.0/19"]
       service_endpoints = ["Microsoft.AzureCosmosDB", "Microsoft.Sql", "Microsoft.KeyVault", "Microsoft.ServiceBus","Microsoft.ContainerRegistry"]
     },
     generic-subnet = {
-      address_prefixes  = ["10.23.0.0/24"]
+      address_prefixes  = ["10.24.0.0/24"]
       service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
     }
   }
 }
-
-variable "tenant_id" {} #will be set from environment variable
 
 variable "admin_group_object_ids" {
   default = ["e1ad18a1-95ec-4cc4-8eb4-61a6aeecff1f"]

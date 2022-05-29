@@ -1,11 +1,11 @@
 namespace: eshop
 protocol: https
-apiGatewayUrlExternal: webshopping-gw.sbx.eshop.luthorcorp.nl
-identityUrlExternal: identity-api.sbx.eshop.luthorcorp.nl
-blazorClientUrlExternal: blazor-client.sbx.eshop.luthorcorp.nl
-seqFqdn: seq.sbx.eshop.luthorcorp.nl
+apiGatewayUrlExternal: webshopping-gw.nonprod.eshop.luthorcorp.nl
+identityUrlExternal: identity-api.nonprod.eshop.luthorcorp.nl
+blazorClientUrlExternal: blazor-client.nonprod.eshop.luthorcorp.nl
+seqFqdn: seq.nonprod.eshop.luthorcorp.nl
 #sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-sqlConnectionString: Server=kube-sbx-a-sqlsrv.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=25ac1989-08d7-4884-a366-6ef497b15bef;
+sqlConnectionString: Server=kube-nonprod-a-sqlsrv.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=25ac1989-08d7-4884-a366-6ef497b15bef;
 
 ingress:
   forceSSLRedirect: true
@@ -15,13 +15,13 @@ ingress:
   tls:
     - secretName: webshopping-gw-tls
       hosts:
-        - webshopping-gw.sbx.eshop.luthorcorp.nl
+        - webshopping-gw.nonprod.eshop.luthorcorp.nl
     - secretName: identity-api-tls
       hosts:
-        - identity-api.sbx.eshop.luthorcorp.nl
+        - identity-api.nonprod.eshop.luthorcorp.nl
     - secretName: blazor-client-tls
       hosts:
-        - blazor-client.sbx.eshop.luthorcorp.nl
+        - blazor-client.nonprod.eshop.luthorcorp.nl
 
 basketImageTag: latest
 blazorClientImageTag: latest

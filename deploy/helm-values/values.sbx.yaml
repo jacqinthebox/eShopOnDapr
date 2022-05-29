@@ -5,7 +5,7 @@ identityUrlExternal: identity-api.sbx.eshop.luthorcorp.nl
 blazorClientUrlExternal: blazor-client.sbx.eshop.luthorcorp.nl
 seqFqdn: seq.sbx.eshop.luthorcorp.nl
 #sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-sqlConnectionString: Server=kube-sbx-a-sqlsrv.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=207ff781-d583-4439-9c7b-87b8afbb3be6;
+sqlConnectionString: Server=kube-sbx-a-sqlsrv.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=25ac1989-08d7-4884-a366-6ef497b15bef;
 
 ingress:
   forceSSLRedirect: true
