@@ -127,3 +127,14 @@ Delete the certificates:
 kubectl get certificate -o name | xargs kubectl delete
 
 ```
+
+
+## With pipeline
+
+environments:
+* sbx (sandbox)
+* npd (non prod)
+* dev (development)
+* prd (production)
+
+kube-<environment>-<id>

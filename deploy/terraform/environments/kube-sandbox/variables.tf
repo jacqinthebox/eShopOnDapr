@@ -72,8 +72,8 @@ variable "additional_nodepools" {
         load : "computeOptimized"
       }
       cluster_auto_scaling           = true
-      cluster_auto_scaling_min_count = 1
-      cluster_auto_scaling_max_count = 3
+      cluster_auto_scaling_min_count = null
+      cluster_auto_scaling_max_count = null
       max_pods                       = 30
       min_pods                       = null
       os_disk_size_gb                = 50
