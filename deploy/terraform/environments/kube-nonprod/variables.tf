@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-npd-a"
+  default = "kube-npd-b"
 }
 
 variable "tenant_id" {} #will be set from environment variable
@@ -71,7 +71,7 @@ variable "additional_nodepools" {
       labels             = {
         load : "computeOptimized"
       }
-      cluster_auto_scaling           = false
+      cluster_auto_scaling           = true
       cluster_auto_scaling_min_count = null
       cluster_auto_scaling_max_count = null
       max_pods                       = 30
