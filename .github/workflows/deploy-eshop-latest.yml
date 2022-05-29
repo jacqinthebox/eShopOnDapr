@@ -12,7 +12,7 @@ on:
   #    main
 
 env:
-  ENVIRONMENT: kube-npd-a #TODO
+  ENVIRONMENT: kube-npd-b #TODO
   ACR_NAME: demo01cr
   ESHOP_NAMESPACE: eshop
   CHART_VERSION: 1.1 # check if we will use commit sha
