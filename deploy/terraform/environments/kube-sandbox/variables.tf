@@ -30,7 +30,7 @@ variable "sa_administrator_login" {
   default = null
 }
 
-variable "sql_aad_admin_object_id" {
+variable "aad_admins_object_id" {
   default = "e1ad18a1-95ec-4cc4-8eb4-61a6aeecff1f"
 }
 variable "sql_aad_admin_login_username" {

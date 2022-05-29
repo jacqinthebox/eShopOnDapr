@@ -26,6 +26,8 @@ module "vault" {
   tags = local.common_tags
   prefix = var.prefix
   resource_group_name = module.kube-group.name
+  key_vault_admins = var.aad_admins_object_id
+  key_vault_consumer = module.key_vault_user_assigned_identity.client_id
 }
 
 module "loganalytics" {
@@ -58,7 +60,7 @@ module "mssql_server" {
   sa_administrator_login = var.sa_administrator_login
   #sql_aad_admin_object_id = module.sql_server_user_assigned_identity.principal_id
   #sql_aad_admin_login_username = module.sql_server_user_assigned_identity.identity_name
-  sql_aad_admin_object_id = var.sql_aad_admin_object_id
+  sql_aad_admin_object_id = var.aad_admins_object_id
   sql_aad_admin_login_username = var.sql_aad_admin_login_username
 }
 
@@ -166,6 +168,13 @@ resource "azurerm_role_assignment" "service_bus_identity_assignment" {
 resource "azurerm_key_vault_secret" "sql_sa_admin_password" {
   name         = module.mssql_server.sql_server_sa_login
   value        = module.mssql_server.sql_server_sa_password
+  key_vault_id = module.vault.vault_id
+}
+
+
+resource "azurerm_key_vault_secret" "service_bus_connectionstring" {
+  name         = module.service_bus.servicebus_name
+  value        = module.service_bus.servicebus_primary_connstring
   key_vault_id = module.vault.vault_id
 }
 

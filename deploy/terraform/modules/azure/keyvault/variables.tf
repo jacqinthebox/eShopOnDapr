@@ -21,6 +21,16 @@ variable "key_vault_name" {
   default = null
 }
 
+variable "key_vault_admins" {
+  description = "(Required). Object id for the key vault identity that gets full access"
+  type = string
+}
+
+variable "key_vault_consumer" {
+  description = "(Required). Object id for the key vault identity that gets permissions to consume secrets"
+  type = string
+}
+
 variable "tags" {
   type = map(string)
   description = "(Optional). A map of key value pairs to tag resources"
