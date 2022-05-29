@@ -30,7 +30,7 @@ variable "sa_administrator_login" {
   default = null
 }
 
-variable "sql_aad_admin_object_id" {
+variable "aad_admins_object_id" {
   default = "e1ad18a1-95ec-4cc4-8eb4-61a6aeecff1f"
 }
 variable "sql_aad_admin_login_username" {
@@ -38,17 +38,17 @@ variable "sql_aad_admin_login_username" {
 }
 
 variable "vnet_address_space" {
-  default = ["10.24.0.0/16"]
+  default = ["10.23.0.0/16"]
 }
 
 variable "subnets" {
   default = {
     kube-subnet = {
-      address_prefixes  = ["10.24.32.0/19"]
+      address_prefixes  = ["10.23.32.0/19"]
       service_endpoints = ["Microsoft.AzureCosmosDB", "Microsoft.Sql", "Microsoft.KeyVault", "Microsoft.ServiceBus","Microsoft.ContainerRegistry"]
     },
     generic-subnet = {
-      address_prefixes  = ["10.24.0.0/24"]
+      address_prefixes  = ["10.23.0.0/24"]
       service_endpoints = ["Microsoft.Storage", "Microsoft.KeyVault"]
     }
   }
