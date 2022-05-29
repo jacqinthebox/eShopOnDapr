@@ -2,7 +2,6 @@ resource "null_resource" "register_az_features" {
   provisioner "local-exec" {
     command = <<EOT
       az feature register --namespace Microsoft.ContainerService -n AutoUpgradePreview
-      az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
       az provider register --name Microsoft.ContainerService
       az extension add --name aks-preview
       az extension update --name aks-preview
