@@ -12,11 +12,11 @@ on:
   #    main
 
 env:
-  ENVIRONMENT: kube-sbx-a #TODO
+  ENVIRONMENT: kube-npd-a #TODO
   ACR_NAME: demo01cr
   ESHOP_NAMESPACE: eshop
   CHART_VERSION: 1.1 # check if we will use commit sha
-  VALUES_PATH: ./deploy/helm-values/values.sbx.yaml
+  VALUES_PATH: ./deploy/helm-values/values.npd.yaml
 
 jobs:
   deploy-to-aks:
