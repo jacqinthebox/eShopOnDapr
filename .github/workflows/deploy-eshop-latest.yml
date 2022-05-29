@@ -7,9 +7,9 @@ name: deploy-eshop
   #    - completed
 on:
   workflow_dispatch:
-  push:
-    branches:
-      main
+  #push:
+  #  branches:
+  #    main
 
 env:
   ENVIRONMENT: kube-sbx-a #TODO
