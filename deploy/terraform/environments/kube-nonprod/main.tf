@@ -182,7 +182,8 @@ resource "azurerm_key_vault_secret" "service_bus_connectionstring" {
 resource "null_resource" "enable-pod-identity" {
   provisioner "local-exec" {
     command = <<EOT
-    az extension update --name aks-preview
+    az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+    az extension add --name aks-preview && az extension update --name aks-preview     
     az aks get-credentials -n ${module.kube.kube_cluster_name} -g ${module.kube.kube_cluster_resource_group} --admin
     az aks update -n ${module.kube.kube_cluster_name} -g ${module.kube.kube_cluster_resource_group} --enable-pod-identity
     EOT
