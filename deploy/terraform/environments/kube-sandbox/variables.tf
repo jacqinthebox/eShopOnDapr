@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-sbx-a"
+  default = "kube-sbx-b"
 }
 
 variable "tenant_id" {} #will be set from environment variable
@@ -71,9 +71,9 @@ variable "additional_nodepools" {
       labels             = {
         load : "computeOptimized"
       }
-      cluster_auto_scaling           = false
-      cluster_auto_scaling_min_count = null
-      cluster_auto_scaling_max_count = null
+      cluster_auto_scaling           = true
+      cluster_auto_scaling_min_count = 1
+      cluster_auto_scaling_max_count = 3
       max_pods                       = 30
       min_pods                       = null
       os_disk_size_gb                = 50

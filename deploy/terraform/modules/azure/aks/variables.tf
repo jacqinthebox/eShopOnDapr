@@ -64,7 +64,7 @@ variable "default_node_pool_zones" {
 }
 
 variable "default_node_pool_name_enable_autoscaling" {
-  default = true
+  default = false
 }
 
 variable "default_node_pool_kubelet_disk_type" {

@@ -148,7 +148,7 @@ module "service_bus_user_assigned_identity" {
 module "sql_server_user_assigned_identity" {
   source = "../../modules/azure/user_assigned_identity"
   location = module.kube.kube_cluster_location
-  identity_name = "sql-server-identity"
+  identity_name = "${var.prefix}-sql-server-identity"
   identity_resourcegroup_name = module.kube.kube_cluster_node_group
 }
 
