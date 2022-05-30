@@ -102,7 +102,7 @@ module "kube" {
   api_server_authorized_ip_ranges  = []
   default_node_pool_vnet_subnet_id = module.vnet.subnet_ids["kube-subnet"]
   default_node_pool_autoscaling_node_count = 1
-  only_critical_addons_enabled = var.only_enable_critical_addons
+  default_node_pool_only_critical_addons_enabled = var.only_enable_critical_addons
   node_resource_group              = "${var.prefix}-nodes-rg"
   admin_group_object_ids = var.admin_group_object_ids
   tenant_id = var.tenant_id
