@@ -7,7 +7,7 @@ on:
 #      main
 
 env:
-  ENVIRONMENT: kube-npd-b #kube-dev #this is the cluster prefix #TODO
+  ENVIRONMENT: kube-npd-c #kube-dev #this is the cluster prefix #TODO
   ENV_SHORT: npd #e.g. dev, tst, prd
   ESHOP_NAMESPACE: eshop
   HOST_NAME: npd.eshop
@@ -68,8 +68,7 @@ jobs:
         echo $ | az extension add --name aks-preview && az extension update --name aks-preview
         echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
         echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-
+     
 
     - name: add lets-encrypt issuers
       run: |

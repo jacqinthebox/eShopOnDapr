@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-npd-b"
+  default = "kube-npd-c"
 }
 
 variable "tenant_id" {} #will be set from environment variable
@@ -58,10 +58,14 @@ variable "admin_group_object_ids" {
   default = ["e1ad18a1-95ec-4cc4-8eb4-61a6aeecff1f"]
 }
 
+variable "only_enable_critical_addons" {
+  default = true
+}
+
 variable "additional_nodepools" {
   default = {
     "computepool01" = {
-      node_count         = 1
+      node_count         = 2
       name               = "compute"
       mode               = "User"
       vm_size            = "Standard_B2ms"
@@ -71,12 +75,12 @@ variable "additional_nodepools" {
       labels             = {
         load : "computeOptimized"
       }
-      cluster_auto_scaling           = true
+      cluster_auto_scaling           = false
       cluster_auto_scaling_min_count = null
       cluster_auto_scaling_max_count = null
-      max_pods                       = 30
+      max_pods                       = 120
       min_pods                       = null
-      os_disk_size_gb                = 50
+      os_disk_size_gb                = 128
     }
   }
 }

@@ -30,7 +30,7 @@ jobs:
       TF_VAR_backend_storage_account_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
       TF_VAR_backend_resource_group_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
       TF_WORK_DIR: "deploy/terraform/environments/kube-nonprod"
-      TF_STATE_KEY: "kube-npd-b"
+      TF_STATE_KEY: "kube-npd-c"
       #TF_VAR_nsg_source_address_prefix: ${{ secrets.MY_IP_ADDRESS }}
 
     steps:

@@ -84,6 +84,7 @@ module "cosmosdb" {
 }
 */
 
+
 module "kube" {
   source                          = "../../modules/azure/aks"
   depends_on                      = [
@@ -100,6 +101,8 @@ module "kube" {
   vnet_subnet_id = module.vnet.subnet_ids["kube-subnet"]
   api_server_authorized_ip_ranges  = []
   default_node_pool_vnet_subnet_id = module.vnet.subnet_ids["kube-subnet"]
+  default_node_pool_autoscaling_node_count = 1
+  only_critical_addons_enabled = var.only_enable_critical_addons
   node_resource_group              = "${var.prefix}-nodes-rg"
   admin_group_object_ids = var.admin_group_object_ids
   tenant_id = var.tenant_id
@@ -177,7 +180,6 @@ resource "azurerm_key_vault_secret" "service_bus_connectionstring" {
   value        = module.service_bus.servicebus_primary_connstring
   key_vault_id = module.vault.vault_id
 }
-
 
 resource "null_resource" "enable-pod-identity" {
   provisioner "local-exec" {
