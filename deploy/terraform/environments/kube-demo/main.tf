@@ -200,19 +200,19 @@ resource "azurerm_key_vault_secret" "service_bus_connectionstring" {
 }
 
 resource "azurerm_role_assignment" "keyvault_virtual_machine_contributor" {
-  scope                = module.kube.kube_cluster_node_group
+  scope                = "/subscriptions/${data.azurerm_subscription.primary.subscription_id}/resourceGroups/${module.kube.kube_cluster_node_group}"
   role_definition_name = "Virtual Machine Contributor"
   principal_id = module.key_vault_user_assigned_identity.principal_id
 }
 
 resource "azurerm_role_assignment" "servicebus_virtual_machine_contributor" {
-  scope                = module.kube.kube_cluster_node_group
+  scope                = "/subscriptions/${data.azurerm_subscription.primary.subscription_id}/resourceGroups/${module.kube.kube_cluster_node_group}"
   role_definition_name = "Virtual Machine Contributor"
   principal_id = module.service_bus_user_assigned_identity.principal_id
 }
 
 resource "azurerm_role_assignment" "sql_virtual_machine_contributor" {
-  scope                = module.kube.kube_cluster_node_group
+  scope                = "/subscriptions/${data.azurerm_subscription.primary.subscription_id}/resourceGroups/${module.kube.kube_cluster_node_group}"
   role_definition_name = "Virtual Machine Contributor"
   principal_id = module.sql_server_user_assigned_identity.principal_id
 }
