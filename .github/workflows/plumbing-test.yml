@@ -94,6 +94,12 @@ jobs:
           --set ingress.hosts[0]=grafana.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
           --set ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
 
+    - name: add kube-state-metrics
+      run: |
+      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      helm repo update
+      helm upgrade --install metrics prometheus-community/kube-state-metrics
+
     - name: add dns records
       run: |
         LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress ${{ env.ENVIRONMENT }}-ingress-nginx-controller  | awk {'print $4'} | tail -1)
