@@ -80,13 +80,19 @@ jobs:
       run: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo update
-        helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring
+        helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
+          --set server.ingress=true \
+          --set server.ingress.annotations="kubernetes.io/ingress.class: nginx"
+          --set server.ingress.hosts[0]=prometheus.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}
 
     - name: add grafana
       run: |
         helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
-        helm upgrade --install grafana grafana/grafana --namespace monitoring
+        helm upgrade --install grafana grafana/grafana --namespace monitoring \
+          --set ingress.enabled=true \
+          --set ingress.hosts[0]=grafana.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
+          --set ingress.annotations="kubernetes.io/ingress.class: nginx"
 
     - name: add dns records
       run: |
@@ -97,4 +103,5 @@ jobs:
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
         az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name monitoring.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+        az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
