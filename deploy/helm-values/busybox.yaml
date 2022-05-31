@@ -2,7 +2,7 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  name: busybox-secrets-store-inline-podid
+  name: busybox-secrets
   labels:
     aadpodidbinding: key-vault-identity                   # Set the label value to the name of your pod identity
 spec:
@@ -22,4 +22,4 @@ spec:
         driver: secrets-store.csi.k8s.io
         readOnly: true
         volumeAttributes:
-          secretProviderClass: "azure-csi-vault-pod-id"
+          secretProviderClass: "azure-csi-secret-provider"

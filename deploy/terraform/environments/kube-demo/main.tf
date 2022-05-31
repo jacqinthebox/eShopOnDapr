@@ -182,7 +182,7 @@ resource "azurerm_key_vault_secret" "sql_sa_login" {
 
 resource "azurerm_key_vault_secret" "azure_sql_connstring" {
   name         = "azure-sql-connection-string"
-  value        = "Server=tcp:${var.prefix}-sqlsrv.database.windows.net,1433;Initial Catalog=Microsoft.eShopOnDapr.Services.IdentityDb;Persist Security Info=False;User ID=kube-npd-c-dbadmin;Password=${module.mssql_server.sql_server_sa_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  value        = "Server=tcp:${var.prefix}-sqlsrv.database.windows.net,1433;Initial Catalog=Microsoft.eShopOnDapr.Services.IdentityDb;Persist Security Info=False;User ID=${var.prefix}-dbadmin;Password=${module.mssql_server.sql_server_sa_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = module.vault.vault_id
 }
 
