@@ -1,0 +1,35 @@
+namespace: eshop
+protocol: https
+apiGatewayUrlExternal: webshopping-gw.npd.eshop.luthorcorp.nl
+identityUrlExternal: identity-api.npd.eshop.luthorcorp.nl
+blazorClientUrlExternal: blazor-client.npd.eshop.luthorcorp.nl
+seqFqdn: seq.npd.eshop.luthorcorp.nl
+sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+#sqlConnectionString: Server=kube-npd-a-sqlsrv.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=7ce82822-4d35-45ce-a7be-689d1f2f432a;
+
+ingress:
+  forceSSLRedirect: true
+  certManager:
+    enabled: true
+    environment: staging
+  tls:
+    - secretName: webshopping-gw-tls
+      hosts:
+        - webshopping-gw.npd.eshop.luthorcorp.nl
+    - secretName: identity-api-tls
+      hosts:
+        - identity-api.npd.eshop.luthorcorp.nl
+    - secretName: blazor-client-tls
+      hosts:
+        - blazor-client.npd.eshop.luthorcorp.nl
+
+basketImageTag: latest
+blazorClientImageTag: latest
+catalogImageTag: latest
+identityImageTag: latest
+orderingImageTag: latest
+paymentImageTag: latest
+webshoppingaggImageTag: latest
+
+dapr:
+  keyVaultClientId: bdd1517e-b2b1-46c1-b140-e83dc8fdab54

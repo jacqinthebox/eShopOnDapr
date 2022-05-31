@@ -1,0 +1,45 @@
+namespace: eshop
+protocol: https
+tenantId: 63060cb1-0960-4615-8769-b110040fa763
+keyVaultName: kube-demo-a-crypt
+
+apiGatewayUrlExternal: webshopping-gw.demo.eshop.luthorcorp.nl
+identityUrlExternal: identity-api.demo.eshop.luthorcorp.nl
+blazorClientUrlExternal: blazor-client.demo.eshop.luthorcorp.nl
+seqFqdn: seq.demo.eshop.luthorcorp.nl
+sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+#sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
+
+dapr:
+  keyVaultClientId: e5ed8377-d25c-4d3f-89d0-b61e5b5a7742 #bdd1517e-b2b1-46c1-b140-e83dc8fdab54
+  pubsub:
+    azureEnabled: false
+
+ingress:
+  forceSSLRedirect: true
+  certManager:
+    enabled: true
+    environment: staging
+  tls:
+    - secretName: webshopping-gw-tls
+      hosts:
+        - webshopping-gw.demo.eshop.luthorcorp.nl
+    - secretName: identity-api-tls
+      hosts:
+        - identity-api.demo.eshop.luthorcorp.nl
+    - secretName: blazor-client-tls
+      hosts:
+        - blazor-client.demo.eshop.luthorcorp.nl
+
+identity:
+  secretProviderVolume: {}
+  secretProviderVolumeMount: {}
+  sqlConnectionStringEnvironmentVariable: {}
+
+basketImageTag: latest
+blazorClientImageTag: latest
+catalogImageTag: latest
+identityImageTag: latest
+orderingImageTag: latest
+paymentImageTag: latest
+webshoppingaggImageTag: latest

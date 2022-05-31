@@ -42,6 +42,7 @@ spec:
       labels:
         app: eshop
         service: identity
+        aadpodidbinding: key-vault-identity
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "identity-api"
@@ -57,6 +58,12 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
+          env:
+            - name: test
+              value: test
+            {{- if .Values.identity.sqlConnectionStringEnvironmentVariable }}
+            {{ tpl .Values.identity.sqlConnectionStringEnvironmentVariable . | indent 12 | trim }}
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: identity-cm
@@ -66,7 +73,12 @@ spec:
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
-
+          {{- if .Values.identity.secretProviderVolumeMount }}
+          {{ tpl .Values.identity.secretProviderVolumeMount . | indent 12 | trim }}
+          {{- end }}
+      {{- if .Values.identity.secretProviderVolume }}
+      {{ tpl .Values.identity.secretProviderVolume . | indent 8 | trim }}
+      {{- end }}
 ---
 
 kind: Service

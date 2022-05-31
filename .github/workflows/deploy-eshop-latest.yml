@@ -1,20 +1,26 @@
 name: deploy-eshop
 
+#on:
+  #workflow_run:
+  #  workflows: ["helm-ci"]
+  #  types:
+  #    - completed
 on:
-  workflow_run:
-    workflows: ["helm-ci"]
-    types:
-      - completed
-      
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    main
+
 env:
-  ENVIRONMENT: kube-dev #TODO
+  ENVIRONMENT: kube-demo-a #TODO
   ACR_NAME: demo01cr
   CHART_VERSION: 1.0.0-latest # use hardcoded latest version by initial rollout
+  VALUES_PATH: ./deploy/helm-values/values.demo.yaml
 
 jobs:
   deploy-to-aks:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v1
@@ -22,6 +28,11 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }} #TODO
         resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
         cluster-name: ${{ env.ENVIRONMENT }}-cluster
+
+    - name: Get code from the repository
+      uses: actions/checkout@v1
+      with:
+        ref: main
 
     - name: Helm tool installer
       uses: Azure/setup-helm@v1
@@ -37,5 +48,5 @@ jobs:
     
     - name: deploy eshop
       run: |
-        echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} --set ingress.certManager.environment=prod
+        helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} -f ${{ env.VALUES_PATH }}
 
