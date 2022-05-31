@@ -27,7 +27,7 @@ module "vault" {
   prefix = var.prefix
   resource_group_name = module.kube-group.name
   key_vault_admins = var.aad_admins_object_id
-  key_vault_consumer = module.key_vault_user_assigned_identity.client_id
+  key_vault_consumer = module.key_vault_user_assigned_identity.principal_id
 }
 
 module "loganalytics" {
@@ -169,16 +169,52 @@ resource "azurerm_role_assignment" "service_bus_identity_assignment" {
 }
 
 resource "azurerm_key_vault_secret" "sql_sa_admin_password" {
-  name         = module.mssql_server.sql_server_sa_login
+  name         = "azure-sql-sa-password"
   value        = module.mssql_server.sql_server_sa_password
   key_vault_id = module.vault.vault_id
 }
 
+resource "azurerm_key_vault_secret" "sql_sa_login" {
+  name         = "azure-sql-sa-login"
+  value        = module.mssql_server.sql_server_sa_login
+  key_vault_id = module.vault.vault_id
+}
+
+resource "azurerm_key_vault_secret" "azure_sql_connstring" {
+  name         = "azure-sql-connection-string"
+  value        = "Server=tcp:${var.prefix}-sqlsrv.database.windows.net,1433;Initial Catalog=Microsoft.eShopOnDapr.Services.IdentityDb;Persist Security Info=False;User ID=kube-npd-c-dbadmin;Password=${module.mssql_server.sql_server_sa_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  key_vault_id = module.vault.vault_id
+}
+
+# hard coded because for making a point
+resource "azurerm_key_vault_secret" "sql_connstring" {
+  name         = "sql-connection-string"
+  value        = "Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true"
+  key_vault_id = module.vault.vault_id
+}
 
 resource "azurerm_key_vault_secret" "service_bus_connectionstring" {
-  name         = module.service_bus.servicebus_name
+  name         = "sb-connection-string"
   value        = module.service_bus.servicebus_primary_connstring
   key_vault_id = module.vault.vault_id
+}
+
+resource "azurerm_role_assignment" "keyvault_virtual_machine_contributor" {
+  scope                = module.kube.kube_cluster_node_group
+  role_definition_name = "Virtual Machine Contributor"
+  principal_id = module.key_vault_user_assigned_identity.principal_id
+}
+
+resource "azurerm_role_assignment" "servicebus_virtual_machine_contributor" {
+  scope                = module.kube.kube_cluster_node_group
+  role_definition_name = "Virtual Machine Contributor"
+  principal_id = module.service_bus_user_assigned_identity.principal_id
+}
+
+resource "azurerm_role_assignment" "sql_virtual_machine_contributor" {
+  scope                = module.kube.kube_cluster_node_group
+  role_definition_name = "Virtual Machine Contributor"
+  principal_id = module.sql_server_user_assigned_identity.principal_id
 }
 
 resource "null_resource" "enable-pod-identity" {

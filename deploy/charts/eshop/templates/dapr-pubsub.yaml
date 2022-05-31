@@ -1,3 +1,4 @@
+{{- if eq .Values.dapr.pubsub.azureEnabled false -}}
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
@@ -27,4 +28,4 @@ spec:
     secretKeyRef:
       name: eshop-secrets
       key: RedisPassword
-
+{{- end }}

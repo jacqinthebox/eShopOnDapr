@@ -1,12 +1,12 @@
 namespace: eshop
 protocol: https
 tenantId: 63060cb1-0960-4615-8769-b110040fa763
-keyVaultName: kube-npd-c-crypt
+keyVaultName: kube-demo-a-crypt
 
-apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
-identityUrlExternal: identity-api.eshop.boringtestdomain.nl
-blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
-seqFqdn: seq.eshop.boringtestdomain.nl
+apiGatewayUrlExternal: webshopping-gw.demo.eshop.luthorcorp.nl
+identityUrlExternal: identity-api.demo.eshop.luthorcorp.nl
+blazorClientUrlExternal: blazor-client.demo.eshop.luthorcorp.nl
+seqFqdn: seq.demo.eshop.luthorcorp.nl
 sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 #sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
 
@@ -23,13 +23,13 @@ ingress:
   tls:
     - secretName: webshopping-gw-tls
       hosts:
-        - webshopping-gw.eshop.boringtestdomain.nl
+        - webshopping-gw.demo.eshop.luthorcorp.nl
     - secretName: identity-api-tls
       hosts:
-        - identity-api.eshop.boringtestdomain.nl
+        - identity-api.demo.eshop.luthorcorp.nl
     - secretName: blazor-client-tls
       hosts:
-        - blazor-client.eshop.boringtestdomain.nl
+        - blazor-client.demo.eshop.luthorcorp.nl
 
 identity:
   secretProviderVolume: {}

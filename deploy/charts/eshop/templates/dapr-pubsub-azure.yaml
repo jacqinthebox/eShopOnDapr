@@ -1,3 +1,4 @@
+{{- if eq .Values.dapr.pubsub.azureEnabled true -}}
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
@@ -7,5 +8,10 @@ spec:
   type: pubsub.azure.servicebus
   version: v1
   metadata:
-    - name: connectionString # Required when not using Azure Authentication.
-      value: "Endpoint=sb://kube-sbx-a-sb-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<**>"
+    - name: connectionString
+      secretKeyRef:
+        name: sb-connection-string
+        key: sb-connection-string
+auth:
+  secretStore: azurekeyvault
+{{- end }}

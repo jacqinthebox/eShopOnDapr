@@ -30,3 +30,6 @@ identityImageTag: latest
 orderingImageTag: latest
 paymentImageTag: latest
 webshoppingaggImageTag: latest
+
+dapr:
+  keyVaultClientId: bdd1517e-b2b1-46c1-b140-e83dc8fdab54
