@@ -13,7 +13,7 @@ sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.Ident
 dapr:
   keyVaultClientId: e5ed8377-d25c-4d3f-89d0-b61e5b5a7742 #bdd1517e-b2b1-46c1-b140-e83dc8fdab54
   pubsub:
-    azureEnabled: true
+    azureEnabled: false
 
 ingress:
   forceSSLRedirect: true
@@ -32,27 +32,9 @@ ingress:
         - blazor-client.demo.eshop.luthorcorp.nl
 
 identity:
-  #secretProviderVolume: {}
-  secretProviderVolume: |
-    volumes:
-      - name: secrets-store01-inline
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: "azure-csi-secret-provider"
-  #secretProviderVolumeMount: {}
-  secretProviderVolumeMount: |
-    volumeMounts:
-      - name: secrets-store01-inline
-        mountPath: "/mnt/secrets-store"
-  #sqlConnectionStringEnvironmentVariable: {}
-  sqlConnectionStringEnvironmentVariable: |
-    - name: ConnectionStrings__IdentityDB
-      valueFrom:
-        secretKeyRef:
-          name: sql-connection-string-secret
-          key: secret
+  secretProviderVolume: {}
+  secretProviderVolumeMount: {}
+  sqlConnectionStringEnvironmentVariable: {}
 
 basketImageTag: latest
 blazorClientImageTag: latest
