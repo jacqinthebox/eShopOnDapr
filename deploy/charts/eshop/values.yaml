@@ -1,11 +1,19 @@
 namespace: eshop
 protocol: https
+tenantId: 63060cb1-0960-4615-8769-b110040fa763
+keyVaultName: kube-npd-c-crypt
+
 apiGatewayUrlExternal: webshopping-gw.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.eshop.boringtestdomain.nl
 seqFqdn: seq.eshop.boringtestdomain.nl
 sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-# Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=testdb;User Id=207ff781-d583-4439-9c7b-87b8afbb3be6;
+#sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
+
+dapr:
+  keyVaultClientId: bdd1517e-b2b1-46c1-b140-e83dc8fdab54
+  pubsub:
+    azureEnabled: false
 
 ingress:
   forceSSLRedirect: true
@@ -22,6 +30,29 @@ ingress:
     - secretName: blazor-client-tls
       hosts:
         - blazor-client.eshop.boringtestdomain.nl
+
+identity:
+  secretProviderVolume: {}
+  #secretProviderVolume: |
+  #  volumes:
+  #    - name: secrets-store01-inline
+  #      csi:
+  #        driver: secrets-store.csi.k8s.io
+  #        readOnly: true
+  #        volumeAttributes:
+  #          secretProviderClass: "azure-csi-secret-provider"
+  secretProviderVolumeMount: {}
+  #secretProviderVolumeMount: |
+  #  volumeMounts:
+  #    - name: secrets-store01-inline
+  #      mountPath: "/mnt/secrets-store"
+  sqlConnectionStringEnvironmentVariable: {}
+  #sqlConnectionStringEnvironmentVariable: |
+  #  - name: ConnectionStrings__IdentityDB
+  #    valueFrom:
+  #      secretKeyRef:
+  #        name: sql-connection-string-secret
+  #        key: secret
 
 basketImageTag: latest
 blazorClientImageTag: latest

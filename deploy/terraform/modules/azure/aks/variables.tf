@@ -64,7 +64,7 @@ variable "default_node_pool_zones" {
 }
 
 variable "default_node_pool_name_enable_autoscaling" {
-  default = true
+  default = false
 }
 
 variable "default_node_pool_kubelet_disk_type" {
@@ -85,10 +85,10 @@ variable "default_node_pool_os_disk_type" {
 }
 
 variable "default_node_pool_autoscaling_max_count" {
-  default = 3
+  default = null
 }
 variable "default_node_pool_autoscaling_min_count" {
-  default = 1
+  default = null
 }
 variable "default_node_pool_autoscaling_node_count" {
   default = 1

@@ -10,6 +10,16 @@ output "kube_cluster_node_group" {
   value = azurerm_kubernetes_cluster.kube.node_resource_group
 }
 
+
+output "kube_cluster_resource_group" {
+  value = azurerm_kubernetes_cluster.kube.resource_group_name
+}
+
+
+output "kube_cluster_name" {
+  value = azurerm_kubernetes_cluster.kube.name
+}
+
 output "private_ssh_key" {
   value = module.ssh-key.private_ssh_key
   sensitive = true
