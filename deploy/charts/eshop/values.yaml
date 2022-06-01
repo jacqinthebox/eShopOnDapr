@@ -1,5 +1,5 @@
 namespace: eshop
-protocol: https
+protocol: http
 tenantId: 63060cb1-0960-4615-8769-b110040fa763
 keyVaultName: kube-npd-c-crypt
 

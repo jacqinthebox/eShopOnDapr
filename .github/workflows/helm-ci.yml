@@ -5,7 +5,14 @@ on:
   #   workflows: ["plumbing"]
   #   types:
   #     - completed
-  workflow_dispatch:    
+  workflow_dispatch:
+    # push:
+    # branches:
+    # - main
+
+    # paths:
+    # - .github/workflows/helm-ci.yml
+    # - .github/workflows/deploy-eshop-latest.yml
 
 env:
   ACR_NAME: demo01cr
