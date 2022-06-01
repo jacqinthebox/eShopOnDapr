@@ -11,6 +11,7 @@ on:
           - plan
           - apply
           - destroy
+          - plumb
       work-dir:
         description: path to tf files, e.g. deploy/terraform/environments/kube-demo
         required: true
@@ -99,7 +100,8 @@ jobs:
 
   plumbing:
     runs-on: ubuntu-latest
-    if:  github.event.inputs.lets-go == 'apply'
+    if:  |
+      github.event.inputs.lets-go == 'apply' || github.event.inputs.lets-go == 'plumb'
     needs: [terraform]
     env:
       ENVIRONMENT: ${{ github.event.inputs.cluster-prefix }} #kube-dev #this is the cluster prefix #TODO
