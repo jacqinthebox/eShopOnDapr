@@ -176,4 +176,4 @@ jobs:
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ingress.certManager.environment=prod,${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
