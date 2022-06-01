@@ -99,7 +99,8 @@ jobs:
 
   plumbing:
     runs-on: ubuntu-latest
-    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if:  github.event.inputs.lets-go == 'apply'
+    needs: [terraform]
     env:
       ENVIRONMENT: ${{ github.event.inputs.cluster-prefix }} #kube-dev #this is the cluster prefix #TODO
       ENV_SHORT: ${{ github.event.inputs.env-short }}
