@@ -12,25 +12,25 @@ on:
           - apply
           - destroy
       work-dir:
-        description: example deploy/terraform/environments/kube-demo
+        description: path to tf files, e.g. deploy/terraform/environments/kube-demo
         required: true
       cluster-prefix:
-        description: example kube-demo-a
+        description: cluster-prefix or environment name, e.g. kube-demo-a
         required: true
       env-short:
-        description: exmple dev, tst, prd
+        description: short environment name, e.g. dev, tst, prd
         required: true
-      eshop-namespace:
+      namespace:
         default: "eshop"
         description: namespace for eshop
         required: true
       host-name:
         required: true
-        description: hostname part of domain name, example dev.eshop, demo.eshop or prod.eshop
+        description: the hostname part of domain name, e.g. dev.eshop, demo.eshop or prod.eshop
       domain-name:
         default: "boringtestdomain.nl"
         required: false
-        description: domain name
+        description: the domain name
       dns-resourcegroup:
         description: dns resource grouo
         required: true
