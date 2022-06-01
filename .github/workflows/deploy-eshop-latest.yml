@@ -1,11 +1,10 @@
 name: deploy-eshop
 
-#on:
-  #workflow_run:
-  #  workflows: ["helm-ci"]
-  #  types:
-  #    - completed
 on:
+  workflow_run:
+   workflows: ["helm-ci"]
+   types:
+     - completed
   workflow_dispatch:
   #push:
   #  branches:
