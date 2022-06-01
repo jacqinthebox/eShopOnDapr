@@ -12,7 +12,7 @@ on:
     - src/BuildingBlocks/**
     - src/Services/Basket/**
     - .github/workflows/basket-api.yml
-    - .github/workflows/app-cicd.yml
+    # - .github/workflows/app-cicd.yml
   
   pull_request:
     branches:

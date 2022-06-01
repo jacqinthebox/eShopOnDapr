@@ -32,7 +32,7 @@ env:
   DOTNET_VERSION: 6.0.x
   USE_DOTNET_PREVIEW: true
   ACR_NAME: demo01cr
-  ENVIRONMENT: kube-demo-a #TODO
+  ENVIRONMENT: kube-dev-a #TODO
 
 jobs:
   BuildContainersForPR_Linux:

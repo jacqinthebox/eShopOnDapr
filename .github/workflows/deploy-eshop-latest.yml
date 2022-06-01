@@ -11,7 +11,7 @@ on:
   #    main
 
 env:
-  ENVIRONMENT: kube-demo-a #TODO
+  ENVIRONMENT: kube-dev-a #TODO
   ACR_NAME: demo01cr
   CHART_VERSION: 1.0.0-latest # use hardcoded latest version by initial rollout
   VALUES_PATH: ./deploy/helm-values/values.before.demo.yaml
