@@ -33,6 +33,7 @@ env:
   USE_DOTNET_PREVIEW: true
   ACR_NAME: demo01cr
   ENVIRONMENT: kube-dev-a #TODO
+  VALUES_PATH: ./deploy/helm-values/values.before.demo.yaml
 
 jobs:
   BuildContainersForPR_Linux:
@@ -176,4 +177,4 @@ jobs:
 
       - name: Deploy eshop
         run: |
-          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }}
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }} -f ${{ env.VALUES_PATH }}
