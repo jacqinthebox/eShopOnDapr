@@ -88,8 +88,7 @@ module "cosmosdb" {
 module "kube" {
   source                          = "../../modules/azure/aks"
   depends_on                      = [
-    module.vnet.subnet_ids,
-    module.loganalytics
+    module.vnet.subnet_ids
   ]
   prefix                          = var.prefix
   kube_resource_group_name        = module.kube-group.name
