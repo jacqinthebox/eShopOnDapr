@@ -1,0 +1,202 @@
+name: kube-cluster
+on:
+  workflow_dispatch:
+    inputs:
+      lets-go:
+        type: choice
+        required: true
+        description: Choose what to do
+        default: plan
+        options:
+          - plan
+          - apply
+          - destroy
+      work-dir:
+        description: example deploy/terraform/environments/kube-demo
+        required: true
+      cluster-prefix:
+        description: example kube-demo-a
+        required: true
+      env-short:
+        description: exmple dev, tst, prd
+        required: true
+      eshop-namespace:
+        default: "eshop"
+        description: namespace for eshop
+        required: true
+      host-name:
+        required: true
+        description: hostname part of domain name, example dev.eshop, demo.eshop or prod.eshop
+      domain-name:
+        default: "boringtestdomain.nl"
+        required: false
+        description: domain name
+      dns-resourcegroup:
+        description: dns resource grouo
+        required: true
+        default: "demo01-rg"
+      dns-subscription:
+        required: true
+        description: subscription name or gui
+        default: "demo01"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_vm_admin_password: ${{ secrets.VM_ADMIN_PASSWORD }}
+      TF_VAR_backend_storage_account_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
+      TF_VAR_backend_resource_group_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
+      TF_WORK_DIR: ${{ github.event.inputs.work-dir }}
+      TF_STATE_KEY: ${{ github.event.inputs.cluster-prefix }}
+      #TF_VAR_nsg_source_address_prefix: ${{ secrets.MY_IP_ADDRESS }}
+
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Terraform Init
+        if: (github.event.inputs.lets-go == 'plan' || github.event.inputs.lets-go == 'apply')
+        run: |
+          terraform -chdir=$TF_WORK_DIR init \
+            -backend-config "resource_group_name=$TF_VAR_backend_resource_group_name" \
+            -backend-config "storage_account_name=$TF_VAR_backend_resource_group_name" \
+            -backend-config "key=$TF_STATE_KEY" -upgrade
+
+      - name: Terraform Plan
+        if: github.event.inputs.lets-go == 'plan'
+        run: |
+          terraform -chdir="$TF_WORK_DIR" plan
+
+        # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: Terraform Apply
+        if: github.event.inputs.lets-go == 'apply'
+        run: |
+          terraform -chdir=$TF_WORK_DIR apply -auto-approve
+
+      - name: Terraform Destroy
+        if: github.event.inputs.lets-go == 'destroy'
+        run: |
+          terraform -chdir=$TF_WORK_DIR init \
+          -backend-config "resource_group_name=$TF_VAR_backend_resource_group_name" \
+          -backend-config "storage_account_name=$TF_VAR_backend_resource_group_name" \
+          -backend-config "key=$TF_STATE_KEY" -upgrade
+          terraform -chdir=$TF_WORK_DIR apply -destroy -auto-approve
+
+  plumbing:
+    runs-on: ubuntu-latest
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      ENVIRONMENT: ${{ github.event.inputs.cluster-prefix }} #kube-dev #this is the cluster prefix #TODO
+      ENV_SHORT: ${{ github.event.inputs.env-short }}
+      ESHOP_NAMESPACE: ${{ github.event.inputs.namespace }}
+      HOST_NAME: ${{ github.event.inputs.host-name }}
+      DOMAIN_NAME: ${{ github.event.inputs.domain-name }}
+      DNS_RESOURCEGROUP: ${{ github.event.inputs.dns-resourcegroup }}
+      DNS_SUBSCRIPTION: ${{ github.event.inputs.dns-subscription }}
+    steps:
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+          cluster-name: ${{ env.ENVIRONMENT }}-cluster
+
+      - name: Get code from the repository
+        uses: actions/checkout@v1
+        with:
+          ref: main
+
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v1
+
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: dapr
+        run: |
+          helm repo add dapr https://dapr.github.io/helm-charts/ && helm repo update
+          helm upgrade --install dapr dapr/dapr --namespace dapr-system --create-namespace --wait
+
+      - name: create namespaces
+        run: |
+          echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+          echo $ | kubectl create ns monitoring --dry-run=client -o yaml | kubectl apply -f -
+
+
+      - name: cert-manager
+        run: |
+          echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+
+      - name: ingress-controller
+        run: |
+          echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          echo $ | helm repo update
+          echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
+
+
+      - name: add pod identities
+        run: |
+          #echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+          #echo $ | az extension add --name aks-preview && az extension update --name aks-preview
+          #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+          #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+          #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+
+
+      - name: add lets-encrypt issuers
+        run: |
+          echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
+          echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
+
+      - name: add prometheus
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
+            --set server.ingress.enabled=true \
+            --set server.ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
+            --set server.ingress.hosts[0]=prometheus.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}
+
+      - name: add grafana
+        run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+          helm upgrade --install grafana grafana/grafana --namespace monitoring \
+            --set ingress.enabled=true \
+            --set ingress.hosts[0]=grafana.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
+            --set ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
+
+      - name: add kube-state-metrics
+        run: |
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo update
+        helm upgrade --install metrics prometheus-community/kube-state-metrics
+
+      - name: add dns records
+        run: |
+          LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress ${{ env.ENVIRONMENT }}-ingress-nginx-controller  | awk {'print $4'} | tail -1)
+          echo $LOADBALANCER_IP
+          az account set --subscription ${{ env.DNS_SUBSCRIPTION }}
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name blazor-client.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
