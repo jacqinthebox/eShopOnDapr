@@ -44,7 +44,7 @@ spec:
       containers:
         - name: webshoppingagg
           image: demo01cr.azurecr.io/webshoppingagg:{{ .Values.webshoppingaggImageTag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 80

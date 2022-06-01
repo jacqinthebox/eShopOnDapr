@@ -5,17 +5,14 @@ on:
     workflows: ["plumbing"]
     types:
       - completed
-        #TODO: add check if successfull
+      
 env:
-  HELM_EXPERIMENTAL_OCI: 1
-  HELM_VERSION_TO_INSTALL: 3.8.0
   ACR_NAME: demo01cr
-  ACR_REPO_NAME: helm-eshop
-  CHART_VERSION: 1.1 # check if we will use commit sha
+  CHART_VERSION: 1.0.0-latest # use hardcoded latest version by initial rollout
 
 jobs:
   push-helm-chart:
-    name: publish acr
+    name: publish Helm chart eshopondapr-${{ env.CHART_VERSION }} to acr
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: prod
@@ -25,8 +22,6 @@ jobs:
       
       - name: install helm
         uses: Azure/setup-helm@v1
-        # with:
-        #   version: ${{ env.HELM_VERSION_TO_INSTALL }}# default is latest
       
       - name: login to acr using helm
         run: |

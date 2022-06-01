@@ -53,7 +53,7 @@ spec:
       containers:
         - name: identity-api
           image: demo01cr.azurecr.io/identity.api:{{ .Values.identityImageTag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 80

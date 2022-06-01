@@ -43,7 +43,7 @@ spec:
       containers:
         - name: basket-api
           image: demo01cr.azurecr.io/basket.api:{{ .Values.basketImageTag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 80
