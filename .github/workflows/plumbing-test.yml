@@ -64,11 +64,11 @@ jobs:
 
     - name: add pod identities
       run: |
-        #echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
-        #echo $ | az extension add --name aks-preview && az extension update --name aks-preview
-        #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-        #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-        #echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+        echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+        echo $ | az extension add --name aks-preview && az extension update --name aks-preview
+        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+        echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
 
 
     - name: add lets-encrypt issuers
@@ -96,9 +96,9 @@ jobs:
 
     - name: add kube-state-metrics
       run: |
-      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      helm repo update
-      helm upgrade --install metrics prometheus-community/kube-state-metrics
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo update
+        helm upgrade --install metrics prometheus-community/kube-state-metrics
 
     - name: add dns records
       run: |
