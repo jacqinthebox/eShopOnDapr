@@ -20,7 +20,7 @@ env:
 
 jobs:
   push-helm-chart:
-    name: publish Helm chart eshopondapr-${{ env.CHART_VERSION }} to acr
+    name: publish Helm chart eshopondapr to acr
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment: prod
