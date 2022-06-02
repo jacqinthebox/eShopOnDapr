@@ -168,6 +168,7 @@ spec:
       labels:
         app: eshop
         service: apigateway
+        aadpodidbinding: key-vault-identity
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "apigateway"

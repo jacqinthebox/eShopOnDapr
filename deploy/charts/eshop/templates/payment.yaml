@@ -31,6 +31,7 @@ spec:
       labels:
         app: eshop
         service: payment
+        aadpodidbinding: key-vault-identity
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "payment-api"
