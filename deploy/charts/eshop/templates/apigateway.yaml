@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: envoy-cm
   namespace: {{ .Values.namespace }}
-data:
+data::q!
   envoy.yaml: >
     admin:
       access_log_path: "/dev/null"
