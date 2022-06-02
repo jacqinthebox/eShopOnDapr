@@ -13,13 +13,13 @@ seqFqdn: seq.dev.eshop.boringtestdomain.nl
 dapr:
   keyVaultClientId: f3290e0a-123d-4d9c-9b2d-b1bd2384f634
   pubsub:
-    azureEnabled: true
+    azureEnabled: false
 
 ingress:
   forceSSLRedirect: true
   certManager:
     enabled: true
-    environment: prod
+    environment: staging
   tls:
     - secretName: webshopping-gw-tls
       hosts:
@@ -32,27 +32,27 @@ ingress:
         - blazor-client.dev.eshop.boringtestdomain.nl
 
 identity:
-  #secretProviderVolume: {}
-  secretProviderVolume: |
-    volumes:
-      - name: secrets-store01-inline
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: "azure-csi-secret-provider"
-  #secretProviderVolumeMount: {}
-  secretProviderVolumeMount: |
-    volumeMounts:
-      - name: secrets-store01-inline
-        mountPath: "/mnt/secrets-store"
-  #sqlConnectionStringEnvironmentVariable: {}
-  sqlConnectionStringEnvironmentVariable: |
-    - name: ConnectionStrings__IdentityDB
-      valueFrom:
-        secretKeyRef:
-          name: sql-connection-string-secret
-          key: secret
+  secretProviderVolume: {}
+  #secretProviderVolume: |
+  #  volumes:
+  #    - name: secrets-store01-inline
+  #      csi:
+  #        driver: secrets-store.csi.k8s.io
+  #        readOnly: true
+  #        volumeAttributes:
+  #          secretProviderClass: "azure-csi-secret-provider"
+  secretProviderVolumeMount: {}
+  #secretProviderVolumeMount: |
+  #  volumeMounts:
+  #    - name: secrets-store01-inline
+  #      mountPath: "/mnt/secrets-store"
+  sqlConnectionStringEnvironmentVariable: {}
+  #sqlConnectionStringEnvironmentVariable: |
+  #  - name: ConnectionStrings__IdentityDB
+  #    valueFrom:
+  #      secretKeyRef:
+  #        name: sql-connection-string-secret
+  #        key: secret
 
 basketImageTag: latest
 blazorClientImageTag: latest
