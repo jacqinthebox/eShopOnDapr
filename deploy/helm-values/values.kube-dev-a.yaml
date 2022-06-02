@@ -11,7 +11,7 @@ seqFqdn: seq.dev.eshop.boringtestdomain.nl
 #sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
 
 dapr:
-  keyVaultClientId: e5ed8377-d25c-4d3f-89d0-b61e5b5a7742 #bdd1517e-b2b1-46c1-b140-e83dc8fdab54
+  keyVaultClientId: f3290e0a-123d-4d9c-9b2d-b1bd2384f634
   pubsub:
     azureEnabled: false
 
