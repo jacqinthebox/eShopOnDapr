@@ -33,6 +33,7 @@ spec:
       labels:
         app: eshop
         service: basket
+        aadpodidbinding: key-vault-identity
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "basket-api"

@@ -35,6 +35,7 @@ spec:
       labels:
         app: eshop
         service: webshoppingagg
+        aadpodidbinding: key-vault-identity
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "webshoppingagg"

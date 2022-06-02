@@ -3,7 +3,7 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: pubsub
-  namespace: eshop
+  namespace: {{ .Values.namespace }}
 spec:
   type: pubsub.azure.servicebus
   version: v1
