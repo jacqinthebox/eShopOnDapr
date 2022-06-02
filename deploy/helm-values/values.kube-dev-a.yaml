@@ -51,7 +51,7 @@ identity:
     - name: ConnectionStrings__IdentityDB
       valueFrom:
         secretKeyRef:
-          name: sql-connection-string-secret
+          name: azure-sql-connection-string-secret
           key: secret
 
 basketImageTag: latest
