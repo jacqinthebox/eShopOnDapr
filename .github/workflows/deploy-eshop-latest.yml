@@ -14,6 +14,7 @@ on:
     - .github/workflows/deploy-eshop-latest.yml
 
 env:
+  NAMESPACE: eshop
   ENVIRONMENT: kube-dev-a #TODO
   ACR_NAME: demo01cr
   CHART_VERSION: 1.0.1-latest # use hardcoded latest version by initial rollout
@@ -30,7 +31,7 @@ jobs:
         resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
         cluster-name: ${{ env.ENVIRONMENT }}-cluster
 
-    - name: get code from the repository
+    - name: Get code from the repository
       uses: actions/checkout@v1
       with:
         ref: main
@@ -43,11 +44,14 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: login to ACR using Helm
+    - name: Login to ACR using Helm
       run: |
         echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     
-    - name: deploy eshop chart to AKS
+    - name: Deploy eshop chart to AKS
       run: |
         helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml
 
+    - name: Restart pods
+      run: |
+        echo $ | kubectl delete --all pods -n ${{ env.NAMESPACE }}

@@ -6,6 +6,7 @@ on:
     - main
     
 env:
+  NAMESPACE: eshop
   ACR_NAME: demo01cr
   ENVIRONMENT: kube-dev-a #TODO
 
@@ -128,3 +129,7 @@ jobs:
       - name: Deploy eshop chart to AKS
         run: |
           echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer1 -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml --set basketImageTag=$NBGV_SemVer1,blazorClientImageTag=$NBGV_SemVer1,catalogImageTag=$NBGV_SemVer1,identityImageTag=$NBGV_SemVer1,orderingImageTag=$NBGV_SemVer1,paymentImageTag=$NBGV_SemVer1,webshoppingaggImageTag=$NBGV_SemVer1
+
+      - name: Restart pods
+        run: |
+          echo $ | kubectl delete --all pods -n ${{ env.NAMESPACE }}

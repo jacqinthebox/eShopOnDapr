@@ -24,25 +24,25 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v2
       
-      - name: install Helm
+      - name: Install Helm
         uses: Azure/setup-helm@v1
       
-      - name: login to ACR using Helm
+      - name: Login to ACR using Helm
         run: |
           echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
 
-      - name: lint and check the chart
+      - name: Lint and check the chart
         run: |
           helm lint deploy/charts/eshop
           helm template deploy/charts/eshop
 
-      - name: save Helm chart to local registry
+      - name: Save Helm chart to local registry
         run: |
           helm package deploy/charts/eshop --version ${{ env.CHART_VERSION }}
             
-      - name: publish chart to ACR
+      - name: Publish chart to ACR
         run: |
           helm push eshopondapr-${{ env.CHART_VERSION }}.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
