@@ -82,16 +82,16 @@ jobs:
       working-directory: ./src
       shell: bash
       env:
-        TAG: $NBGV_SemVer
+        TAG: $NBGV_SemVer2
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
-    - name: compose push ${{ inputs.SERVICE }}:$NBGV_SemVer
+    - name: compose push ${{ inputs.SERVICE }}:$NBGV_SemVer2
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: $NBGV_SemVer
+        TAG: $NBGV_SemVer2
 
   BuildLinux:
     runs-on: ubuntu-latest
