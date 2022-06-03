@@ -7,8 +7,6 @@ apiGatewayUrlExternal: webshopping-gw.dev.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.dev.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.dev.eshop.boringtestdomain.nl
 seqFqdn: seq.dev.eshop.boringtestdomain.nl
-#sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-#sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
 
 dapr:
   keyVaultClientId: f3290e0a-123d-4d9c-9b2d-b1bd2384f634

@@ -7,13 +7,11 @@ apiGatewayUrlExternal: webshopping-gw.dev.eshop.boringtestdomain.nl
 identityUrlExternal: identity-api.dev.eshop.boringtestdomain.nl
 blazorClientUrlExternal: blazor-client.dev.eshop.boringtestdomain.nl
 seqFqdn: seq.dev.eshop.boringtestdomain.nl
-#sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-#sqlConnectionString: Server=servername.database.windows.net;Authentication=Active Directory MSI;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=xxx;
 
 dapr:
   keyVaultClientId: f3290e0a-123d-4d9c-9b2d-b1bd2384f634
   pubsub:
-    azureEnabled: false
+    azureEnabled: true
 
 ingress:
   forceSSLRedirect: true
@@ -32,27 +30,27 @@ ingress:
         - blazor-client.dev.eshop.boringtestdomain.nl
 
 identity:
-  secretProviderVolume: {}
-  #secretProviderVolume: |
-  #  volumes:
-  #    - name: secrets-store01-inline
-  #      csi:
-  #        driver: secrets-store.csi.k8s.io
-  #        readOnly: true
-  #        volumeAttributes:
-  #          secretProviderClass: "azure-csi-secret-provider"
-  secretProviderVolumeMount: {}
-  #secretProviderVolumeMount: |
-  #  volumeMounts:
-  #    - name: secrets-store01-inline
-  #      mountPath: "/mnt/secrets-store"
-  sqlConnectionStringEnvironmentVariable: {}
-  #sqlConnectionStringEnvironmentVariable: |
-  #  - name: ConnectionStrings__IdentityDB
-  #    valueFrom:
-  #      secretKeyRef:
-  #        name: sql-connection-string-secret
-  #        key: secret
+  #secretProviderVolume: {}
+  secretProviderVolume: |
+    volumes:
+      - name: secrets-store01-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-csi-secret-provider"
+  #secretProviderVolumeMount: {}
+  secretProviderVolumeMount: |
+    volumeMounts:
+      - name: secrets-store01-inline
+        mountPath: "/mnt/secrets-store"
+  #sqlConnectionStringEnvironmentVariable: {}
+  sqlConnectionStringEnvironmentVariable: |
+    - name: ConnectionStrings__IdentityDB
+      valueFrom:
+        secretKeyRef:
+          name: azure-sql-connection-string-secret
+          key: secret
 
 basketImageTag: latest
 blazorClientImageTag: latest
