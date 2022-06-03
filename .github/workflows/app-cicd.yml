@@ -84,7 +84,7 @@ jobs:
       working-directory: ./src
       shell: bash
       env:
-        TAG: ${{ NBGV_SemVer1 }}
+        TAG: ${{ env.NBGV_SemVer1 }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
     - name: compose push ${{ inputs.SERVICE }}
@@ -93,7 +93,7 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: ${{ NBGV_SemVer1 }}
+        TAG: ${{ env.NBGV_SemVer1 }}
 
   BuildLinux:
     runs-on: ubuntu-latest
