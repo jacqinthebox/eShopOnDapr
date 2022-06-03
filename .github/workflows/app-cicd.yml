@@ -42,7 +42,7 @@ jobs:
     - name: checkout repo for version control (do not use shallow checkout or define depth)
       uses: actions/checkout@v1
 
-    - name: get SemVer1 version using Nerdbank git versioning
+    - name: get SemVer2 version using Nerdbank git versioning
       uses: dotnet/nbgv@master
       with:
         setAllVars: true
@@ -91,7 +91,7 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: $ESHOP_EXTERNAL_DNS_NAME_OR_IP 
+        TAG: $NBGV_SemVer2
 
   BuildLinux:
     runs-on: ubuntu-latest
