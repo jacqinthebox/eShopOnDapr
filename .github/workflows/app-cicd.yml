@@ -85,13 +85,13 @@ jobs:
         TAG: $NBGV_SemVer2
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
-    - name: compose push ${{ inputs.SERVICE }}:$NBGV_SemVer2
+    - name: compose push ${{ inputs.SERVICE }}
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: $NBGV_SemVer2
+        TAG: $ESHOP_EXTERNAL_DNS_NAME_OR_IP 
 
   BuildLinux:
     runs-on: ubuntu-latest
