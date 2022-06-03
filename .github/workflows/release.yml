@@ -5,6 +5,9 @@ on:
     branches:
     - main
     
+env:
+  ACR_NAME: demo01cr
+
 jobs:
   build-basket-api:
     uses: ./.github/workflows/app-cicd.yml
@@ -79,29 +82,29 @@ jobs:
     secrets: inherit
 
 
-  BuildAndDeployHelmChartPR:
+  build-and-deploy-helm-chart-pr:
     needs: [ build-basket-api, build-blazor-client, build-catalog-api, build-identity-service, build-ordering-api, build-payment-api, build-webshoppingagg, build-webshoppingapigw]
     if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
     name: build, push and deploy Helm chart
     runs-on: ubuntu-latest
     environment: prod
     steps:
-      - name: checkout repo for version control (do not use shallow checkout or define depth)
+      - name: Checkout repo for version control (do not use shallow checkout or define depth)
         uses: actions/checkout@v1
 
-      - name: get SemVer2 version using Nerdbank git versioning
+      - name: Get SemVer1 version using Nerdbank git versioning
         uses: dotnet/nbgv@master
         with:
           setAllVars: true
 
-      - name: install Helm
+      - name: Install Helm
         uses: Azure/setup-helm@v1
       
-      - name: login to ACR using Helm
+      - name: Login to ACR using Helm
         run: |
           echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
       
-      - name: save Helm chart to local registry
+      - name: Save Helm chart to local registry
         run: |
           helm package deploy/charts/eshop --version $NBGV_SemVer1
             
@@ -117,10 +120,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: publish eshop chart to ACR
+      - name: Publish eshop chart to ACR
         run: |
           helm push eshopondapr-$NBGV_SemVer1.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
-      - name: deploy eshop chart to AKS
+      - name: Deploy eshop chart to AKS
         run: |
           echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer1 -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml --set basketImageTag=$NBGV_SemVer1,blazorClientImageTag=$NBGV_SemVer1,catalogImageTag=$NBGV_SemVer1,identityImageTag=$NBGV_SemVer1,orderingImageTag=$NBGV_SemVer1,paymentImageTag=$NBGV_SemVer1,webshoppingaggImageTag=$NBGV_SemVer1

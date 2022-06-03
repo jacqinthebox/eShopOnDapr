@@ -35,35 +35,35 @@ env:
   ENVIRONMENT: kube-dev-a #TODO
 
 jobs:
-  BuildContainersForPR_Linux:
+  build-containeres-for-pr-linux:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' }}
     steps:    
-    - name: checkout repo for version control (do not use shallow checkout or define depth)
+    - name: Checkout repo for version control (do not use shallow checkout or define depth)
       uses: actions/checkout@v1
 
-    - name: get SemVer1 version using Nerdbank git versioning
+    - name: Get SemVer1 version using Nerdbank git versioning
       uses: dotnet/nbgv@master
       with:
         setAllVars: true
 
     - run: echo "NBGV_SemVer1 $NBGV_SemVer1"
 
-    - name: setup dotnet
+    - name: Setup dotnet
       if: ${{ inputs.BUILD_DOTNET }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
-    - name: build
+    - name: Build
       if: ${{ inputs.BUILD_DOTNET }}
       run: |
         dotnet restore "${{ inputs.BUILD_PATH }}/${{ inputs.CSPROJ_FILE }}.csproj"
         cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 
-    - name: enable experimental features for the Docker daemon and CLI
+    - name: Enable experimental features for the Docker daemon and CLI
       run: |
           echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
           mkdir -p ~/.docker
@@ -72,14 +72,14 @@ jobs:
           docker version -f '{{.Client.Experimental}}'
           docker version -f '{{.Server.Experimental}}'
 
-    - name: login to ACR
+    - name: Login to ACR
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
 
-    - name: compose build ${{ inputs.SERVICE }}
+    - name: Compose build ${{ inputs.SERVICE }}
       run: sudo -E docker-compose build ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -87,7 +87,7 @@ jobs:
         TAG: ${{ env.NBGV_SemVer1 }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
-    - name: compose push ${{ inputs.SERVICE }}
+    - name: Compose push ${{ inputs.SERVICE }}
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -95,28 +95,28 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ env.NBGV_SemVer1 }}
 
-  BuildLinux:
+  build-linux:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-    - name: checkout Github action
+    - name: Checkout Github action
       uses: actions/checkout@master
 
-    - name: setup dotnet
+    - name: Setup dotnet
       if: ${{ inputs.BUILD_DOTNET }}
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
 
-    - name: build
+    - name: Build
       if: ${{ inputs.BUILD_DOTNET }}
       run: |
         dotnet restore "${{ inputs.BUILD_PATH }}/${{ inputs.CSPROJ_FILE }}.csproj"
         cd ${{ inputs.BUILD_PATH }}
         dotnet build --no-restore
 
-    - name: enable experimental features for the Docker daemon and CLI
+    - name: Enable experimental features for the Docker daemon and CLI
       run: |
           echo $'{\n  "experimental": true\n}' | sudo tee /etc/docker/daemon.json
           mkdir -p ~/.docker
@@ -125,14 +125,14 @@ jobs:
           docker version -f '{{.Client.Experimental}}'
           docker version -f '{{.Server.Experimental}}'
 
-    - name: login to ACR
+    - name: Login to ACR
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_ENDPOINT }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
 
-    - name: compose build ${{ inputs.SERVICE }}:${{ github.sha }}
+    - name: Compose build ${{ inputs.SERVICE }}:${{ github.sha }}
       run: sudo -E docker-compose build ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -140,7 +140,7 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
 
-    - name: compose push ${{ inputs.SERVICE }}:${{ github.sha }}
+    - name: Compose push ${{ inputs.SERVICE }}:${{ github.sha }}
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -148,7 +148,7 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: ${{ github.sha }}
 
-    - name: compose build ${{ inputs.SERVICE }}:latest
+    - name: Compose build ${{ inputs.SERVICE }}:latest
       run: sudo -E docker-compose build ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -156,7 +156,7 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: latest
 
-    - name: compose push ${{ inputs.SERVICE }}:latest
+    - name: Compose push ${{ inputs.SERVICE }}:latest
       run: sudo -E docker-compose push ${{ inputs.SERVICE }}
       working-directory: ./src
       shell: bash
@@ -164,29 +164,29 @@ jobs:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
         TAG: latest
 
-  BuildAndDeployHelmChart:
-    needs: [ BuildLinux ]
+  build-and-deploy-helm-charts:
+    needs: [ build-linux ]
     if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
     name: build, push and deploy Helm chart
     runs-on: ubuntu-latest
     environment: prod
     steps:
-      - name: checkout repo for version control (do not use shallow checkout or define depth)
+      - name: Checkout repo for version control (do not use shallow checkout or define depth)
         uses: actions/checkout@v1
 
-      - name: get SemVer2 version using Nerdbank git versioning
+      - name: Get SemVer2 version using Nerdbank git versioning
         uses: dotnet/nbgv@master
         with:
           setAllVars: true
 
-      - name: install Helm
+      - name: Install Helm
         uses: Azure/setup-helm@v1
       
-      - name: login to ACR using Helm
+      - name: Login to ACR using Helm
         run: |
           echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
       
-      - name: save Helm chart to local registry
+      - name: Save Helm chart to local registry
         run: |
           helm package deploy/charts/eshop --version $NBGV_SemVer2
             
@@ -202,12 +202,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: publish eshop chart to ACR
+      - name: Publish eshop chart to ACR
         run: |
           helm push eshopondapr-$NBGV_SemVer2.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
 
-      - name: deploy eshop chart to AKS
+      - name: Deploy eshop chart to AKS
         run: |
           echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer2 --set ${{ inputs.IMAGE_TAG_NAME }}=${{ github.sha }} -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml
-
-
