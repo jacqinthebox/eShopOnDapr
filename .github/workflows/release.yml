@@ -7,6 +7,7 @@ on:
     
 env:
   ACR_NAME: demo01cr
+  ENVIRONMENT: kube-dev-a #TODO
 
 jobs:
   build-basket-api:
