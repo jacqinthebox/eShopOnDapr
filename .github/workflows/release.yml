@@ -1,0 +1,135 @@
+name: basket-api
+
+on:  
+  pull_request:
+    branches:
+    - main
+    
+env:
+  NAMESPACE: eshop
+  ACR_NAME: demo01cr
+  ENVIRONMENT: kube-dev-a #TODO
+
+jobs:
+  build-basket-api:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: basket-api
+      IMAGE_TAG_NAME: basketImageTag
+      BUILD_PATH: src/Services/Basket/Basket.API
+      CSPROJ_FILE: Basket.API
+      BUILD_DOTNET: true
+    secrets: inherit
+
+  build-blazor-client:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: blazor-client
+      IMAGE_TAG_NAME: blazorClientImageTag
+      BUILD_PATH: src/Web/BlazorClient.Host
+      CSPROJ_FILE: BlazorClient.Host
+      BUILD_DOTNET: true
+    secrets: inherit
+
+  build-catalog-api:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: catalog-api
+      IMAGE_TAG_NAME: catalogImageTag
+      BUILD_PATH: src/Services/Catalog/Catalog.API
+      CSPROJ_FILE: Catalog.API
+      BUILD_DOTNET: true
+    secrets: inherit
+
+  build-identity-service:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: identity-api
+      IMAGE_TAG_NAME: identityImageTag
+      BUILD_DOTNET: false
+    secrets: inherit
+
+  build-ordering-api:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: ordering-api
+      IMAGE_TAG_NAME: orderingImageTag
+      BUILD_PATH: src/Services/Ordering/Ordering.API
+      CSPROJ_FILE: Ordering.API
+      BUILD_DOTNET: true
+    secrets: inherit
+
+  build-payment-api:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: payment-api
+      IMAGE_TAG_NAME: paymentImageTag
+      BUILD_DOTNET: false
+    secrets: inherit
+
+  build-webshoppingagg:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: webshoppingagg
+      IMAGE_TAG_NAME: webshoppingaggImageTag
+      BUILD_DOTNET: false
+    secrets: inherit
+
+  build-webshoppingapigw:
+    uses: ./.github/workflows/app-cicd.yml
+    with:
+      SERVICE: webshoppingapigw
+      IMAGE_TAG_NAME: webshoppingapigwImageTag
+      BUILD_DOTNET: false
+    secrets: inherit
+
+
+  build-and-deploy-helm-chart-pr:
+    needs: [ build-basket-api, build-blazor-client, build-catalog-api, build-identity-service, build-ordering-api, build-payment-api, build-webshoppingagg, build-webshoppingapigw]
+    if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
+    name: build, push and deploy Helm chart
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Checkout repo for version control (do not use shallow checkout or define depth)
+        uses: actions/checkout@v1
+
+      - name: Get SemVer1 version using Nerdbank git versioning
+        uses: dotnet/nbgv@master
+        with:
+          setAllVars: true
+
+      - name: Install Helm
+        uses: Azure/setup-helm@v1
+      
+      - name: Login to ACR using Helm
+        run: |
+          echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
+      
+      - name: Save Helm chart to local registry
+        run: |
+          helm package deploy/charts/eshop --version $NBGV_SemVer1
+            
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
+          cluster-name: ${{ env.ENVIRONMENT }}-cluster
+          
+      - name: Azure login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Publish eshop chart to ACR
+        run: |
+          helm push eshopondapr-$NBGV_SemVer1.tgz oci://${{ env.ACR_NAME }}.azurecr.io/helm
+
+      - name: Deploy eshop chart to AKS
+        run: |
+          echo $ | helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version $NBGV_SemVer1 -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml --set basketImageTag=$NBGV_SemVer1,blazorClientImageTag=$NBGV_SemVer1,catalogImageTag=$NBGV_SemVer1,identityImageTag=$NBGV_SemVer1,orderingImageTag=$NBGV_SemVer1,paymentImageTag=$NBGV_SemVer1,webshoppingaggImageTag=$NBGV_SemVer1
+
+      - name: Restart pods
+        run: |
+          echo $ | kubectl delete --all pods -n ${{ env.NAMESPACE }}

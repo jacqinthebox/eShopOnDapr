@@ -63,14 +63,15 @@ jobs:
       #TF_VAR_nsg_source_address_prefix: ${{ secrets.MY_IP_ADDRESS }}
 
     steps:
-      - uses: azure/login@v1
+      - name: Azure login
+        uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Terraform Init
+      - name: Terraform init
         if: (github.event.inputs.lets-go == 'plan' || github.event.inputs.lets-go == 'apply')
         run: |
           terraform -chdir=$TF_WORK_DIR init \
@@ -78,18 +79,18 @@ jobs:
             -backend-config "storage_account_name=$TF_VAR_backend_resource_group_name" \
             -backend-config "key=$TF_STATE_KEY" -upgrade
 
-      - name: Terraform Plan
+      - name: Terraform plan
         if: github.event.inputs.lets-go == 'plan'
         run: |
           terraform -chdir="$TF_WORK_DIR" plan
 
         # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      - name: Terraform Apply
+      - name: Terraform apply
         if: github.event.inputs.lets-go == 'apply'
         run: |
           terraform -chdir=$TF_WORK_DIR apply -auto-approve
 
-      - name: Terraform Destroy
+      - name: Terraform destroy
         if: github.event.inputs.lets-go == 'destroy'
         run: |
           terraform -chdir=$TF_WORK_DIR init \
@@ -127,34 +128,32 @@ jobs:
       - name: Helm tool installer
         uses: Azure/setup-helm@v1
 
-      - name: Azure Login
+      - name: Azure login
         uses: Azure/login@v1.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: dapr
+      - name: Add Dapr
         run: |
           helm repo add dapr https://dapr.github.io/helm-charts/ && helm repo update
           helm upgrade --install dapr dapr/dapr --namespace dapr-system --create-namespace --wait
 
-      - name: create namespaces
+      - name: Create namespaces
         run: |
           echo $ | kubectl create ns ${{ env.ESHOP_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
           echo $ | kubectl create ns monitoring --dry-run=client -o yaml | kubectl apply -f -
 
-
-      - name: cert-manager
+      - name: Add cert-manager
         run: |
           echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 
-      - name: ingress-controller
+      - name: Add ingress-controller
         run: |
           echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           echo $ | helm repo update
           echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
 
-
-      - name: add pod identities
+      - name: Add pod identities
         run: |
           echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
           echo $ | az extension add --name aks-preview && az extension update --name aks-preview
@@ -162,13 +161,12 @@ jobs:
           echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
           echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
 
-
-      - name: add lets-encrypt issuers
+      - name: Add lets-encrypt issuers
         run: |
           echo $ | kubectl apply -f './deploy/cert-manager/staging-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
           echo $ | kubectl apply -f './deploy/cert-manager/prod-issuer.yaml' --namespace ${{ env.ESHOP_NAMESPACE }}
 
-      - name: add prometheus
+      - name: Add Prometheus
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
@@ -177,7 +175,7 @@ jobs:
             --set server.ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
             --set server.ingress.hosts[0]=prometheus.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}
 
-      - name: add grafana
+      - name: Add Grafana
         run: |
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
@@ -186,13 +184,13 @@ jobs:
             --set ingress.hosts[0]=grafana.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
             --set ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
 
-      - name: add kube-state-metrics
+      - name: Add kube-state-metrics
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
           helm upgrade --install metrics prometheus-community/kube-state-metrics
 
-      - name: add dns records
+      - name: Add DNS records
         run: |
           LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress ${{ env.ENVIRONMENT }}-ingress-nginx-controller  | awk {'print $4'} | tail -1)
           echo $LOADBALANCER_IP
