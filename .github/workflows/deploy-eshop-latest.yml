@@ -30,7 +30,7 @@ jobs:
         resource-group: ${{ env.ENVIRONMENT }}-cluster-rg
         cluster-name: ${{ env.ENVIRONMENT }}-cluster
 
-    - name: Get code from the repository
+    - name: get code from the repository
       uses: actions/checkout@v1
       with:
         ref: main
@@ -38,16 +38,16 @@ jobs:
     - name: Helm tool installer
       uses: Azure/setup-helm@v1
 
-    - name: Azure Login
+    - name: Azure login
       uses: Azure/login@v1.1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: login to acr using helm
+    - name: login to ACR using Helm
       run: |
         echo $ | helm registry login  ${{ env.ACR_NAME }}.azurecr.io --username ${{ secrets.USERNAME }} --password ${{ secrets.PASSWORD }}
     
-    - name: deploy eshop
+    - name: deploy eshop chart to AKS
       run: |
         helm upgrade --install eshop oci://demo01cr.azurecr.io/helm/eshopondapr --version ${{ env.CHART_VERSION }} -f ./deploy/helm-values/values.${{ env.ENVIRONMENT }}.yaml
 
