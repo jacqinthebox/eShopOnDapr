@@ -42,10 +42,12 @@ jobs:
     - name: checkout repo for version control (do not use shallow checkout or define depth)
       uses: actions/checkout@v1
 
-    - name: get SemVer2 version using Nerdbank git versioning
+    - name: get SemVer1 version using Nerdbank git versioning
       uses: dotnet/nbgv@master
       with:
         setAllVars: true
+
+    - run: echo "NBGV_SemVer1 $NBGV_SemVer1"
 
     - name: setup dotnet
       if: ${{ inputs.BUILD_DOTNET }}
@@ -82,7 +84,7 @@ jobs:
       working-directory: ./src
       shell: bash
       env:
-        TAG: $NBGV_SemVer2
+        TAG: ${{ NBGV_SemVer1 }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
 
     - name: compose push ${{ inputs.SERVICE }}
@@ -91,7 +93,7 @@ jobs:
       shell: bash
       env:
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-        TAG: $NBGV_SemVer2
+        TAG: ${{ NBGV_SemVer1 }}
 
   BuildLinux:
     runs-on: ubuntu-latest
