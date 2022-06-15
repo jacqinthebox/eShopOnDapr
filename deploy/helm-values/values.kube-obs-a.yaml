@@ -34,7 +34,7 @@ ingress:
 identity:
   #secretProviderVolume: {}
   #secretProviderVolumeMount: {}
-  #sqlConnectionStringEnvironmentVariable: {}
+  sqlConnectionStringEnvironmentVariable: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
 basketImageTag: latest
 blazorClientImageTag: latest
