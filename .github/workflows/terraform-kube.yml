@@ -33,12 +33,12 @@ on:
         required: false
         description: the domain name
       dns-resourcegroup:
-        description: dns resource grouo
+        description: azure dns resource grouo
         required: true
         default: "demo01-rg"
       dns-subscription:
         required: true
-        description: subscription name or gui
+        description: azure dns subscription name or guid
         default: "demo01"
 
 permissions:

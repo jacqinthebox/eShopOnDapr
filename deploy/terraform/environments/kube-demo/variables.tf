@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-obs-a"
+  default = "kube-demo-a"
 }
 
 variable "tenant_id" {} #will be set from environment variable
