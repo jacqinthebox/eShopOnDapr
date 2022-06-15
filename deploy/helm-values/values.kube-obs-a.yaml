@@ -9,7 +9,6 @@ blazorClientUrlExternal: blazor-client.dev.eshop.boringtestdomain.nl
 seqFqdn: seq.dev.eshop.boringtestdomain.nl
 sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
 
-
 dapr:
   keyVaultClientId: f3290e0a-123d-4d9c-9b2d-b1bd2384f634
   pubsub:
@@ -32,9 +31,9 @@ ingress:
         - blazor-client.dev.eshop.boringtestdomain.nl
 
 identity:
-  #secretProviderVolume: {}
-  #secretProviderVolumeMount: {}
-  sqlConnectionStringEnvironmentVariable: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+  secretProviderVolume: {}
+  secretProviderVolumeMount: {}
+  sqlConnectionStringEnvironmentVariable: {}
 
 basketImageTag: latest
 blazorClientImageTag: latest
