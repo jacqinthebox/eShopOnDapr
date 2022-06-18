@@ -155,9 +155,12 @@ jobs:
 
       - name: Add ingress-controller
         run: |
-          echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          echo $ | helm repo update
-          echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx --namespace kube-ingress --create-namespace set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx \ 
+            --namespace kube-ingress \ 
+            --create-namespace \
+            --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
 
       - name: Add pod identities
         run: |
