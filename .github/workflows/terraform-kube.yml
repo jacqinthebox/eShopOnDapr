@@ -13,7 +13,7 @@ on:
           - destroy
           - plumb
       work-dir:
-        description: path to tf files, e.g. deploy/terraform/environments/kube-demo
+        description: path to tf files, e.g. deploy/terraform/environments/kube-dev
         default: "deploy/terraform/environments/kube-dev"
         required: true
       cluster-prefix:
@@ -153,7 +153,7 @@ jobs:
         run: |
           echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           echo $ | helm repo update
-          echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace
+          echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx --namespace kube-ingress --create-namespace set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
 
       - name: Add pod identities
         run: |
@@ -197,9 +197,6 @@ jobs:
           LOADBALANCER_IP=$(kubectl get service --namespace kube-ingress ${{ env.ENVIRONMENT }}-ingress-nginx-controller  | awk {'print $4'} | tail -1)
           echo $LOADBALANCER_IP
           az account set --subscription ${{ env.DNS_SUBSCRIPTION }}
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name blazor-client.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name identity-api.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name seq.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name webshopping-gw.${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name ${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
           az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
           az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
