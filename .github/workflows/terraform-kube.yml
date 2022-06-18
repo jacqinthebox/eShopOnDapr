@@ -30,6 +30,7 @@ on:
         required: true
       host-name:
         required: true
+        default: "dev.eshop"
         description: the hostname part of domain name, e.g. dev.eshop, demo.eshop or prod.eshop
       domain-name:
         default: "boringtestdomain.nl"
