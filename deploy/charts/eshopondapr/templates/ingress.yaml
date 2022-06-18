@@ -1,0 +1,241 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "prod") }}
+    {{- template "cert-manager-prod.annotations" }}
+    {{- end }}
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "staging") }}
+    {{- template "cert-manager-staging.annotations" }}
+    {{- end }}
+  labels:
+    app: eshop
+    service: apigateway
+  name: apigateway-ingress
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: apigateway
+                port:
+                  number: 80
+            path: /gateway(/|$)(.*)
+            pathType: Prefix
+---                
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "prod") }}
+    {{- template "cert-manager-prod.annotations" }}
+    {{- end }}
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "staging") }}
+    {{- template "cert-manager-staging.annotations" }}
+    {{- end }}
+  labels:
+    app: eshop
+    service: blazorclient
+  name: client-ingress
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: blazor-client
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+          - backend:
+              service:
+                name: identity-api
+                port:
+                  name: http
+            path: /identity/(.*)
+            pathType: Prefix
+---    
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "prod") }}
+    {{- template "cert-manager-prod.annotations" }}
+    {{- end }}
+    {{- if and (eq .Values.ingress.certManager.enabled true ) (eq .Values.ingress.certManager.environment "staging") }}
+    {{- template "cert-manager-staging.annotations" }}
+    {{- end }}
+  labels:
+    app: eshop
+    service: seq
+  name: seq-ingress
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: seq
+                port:
+                  name: ui
+            path: /log/(.*)
+            pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    nginx.ingress.kubernetes.io/permanent-redirect: {{ .Values.global.protocol }}://{{ .Values.global.hostName }}/log/
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+  labels:
+    app: eshop
+    service: seq
+  name: seq-ingress-redirect
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: seq
+                port:
+                  name: ui
+            path: /log
+            pathType: Exact
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app: eshop
+    service: webstatus
+  name: webstatus-ingress
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: webstatus
+                port:
+                  number: 80
+            path: /status(/.*)
+            pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    nginx.ingress.kubernetes.io/permanent-redirect: {{ .Values.global.protocol }}://{{ .Values.global.hostName }}/status/
+    nginx.ingress.kubernetes.io/force-ssl-redirect: {{ .Values.ingress.forceSSLRedirect | quote }}
+  labels:
+    app: eshop
+    service: webstatus
+  name: webstatus-ingress-redirect
+  namespace:  {{ .Values.global.namespace }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.hostName }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: webstatus
+                port:
+                  name: http
+            path: /status
+            pathType: Exact

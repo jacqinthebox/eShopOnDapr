@@ -1,0 +1,73 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: blazorclient-cm
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: blazorclient
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  ApiGatewayUrlExternal: {{ .Values.global.protocol }}://{{ .Values.global.hostName }}/gateway/
+  IdentityUrlExternal: {{ .Values.global.protocol }}://{{ .Values.global.hostName }}/identity
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: blazorclient
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: blazorclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: blazorclient
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: blazorclient
+        aadpodidbinding: key-vault-identity
+    spec:
+      containers:
+        - name: blazorclient
+          image: {{ .Values.global.containerRegistry}}/blazor.client:{{ .Values.blazorClientImageTag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: client-http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: blazorclient-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: blazor-client
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: blazorclient
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: blazorclient
+

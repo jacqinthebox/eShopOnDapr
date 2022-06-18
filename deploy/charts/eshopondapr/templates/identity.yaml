@@ -1,0 +1,96 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: identity-cm
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: identity
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  PATH_BASE: /identity
+  SeqServerUrl: http://seq
+  IssuerUrl: {{ .Values.global.protocol }}://{{ .Values.global.hostName}}/identity
+  BlazorClientUrlExternal: {{ .Values.global.protocol }}://{{ .Values.global.hostName}}
+  # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
+  #ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+  ConnectionStrings__IdentityDB: {{ .Values.identity.sqlConnectionString }}
+
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: identity
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: identity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: identity
+  template:
+    metadata:
+      labels:
+        app: eshop
+        service: identity
+        aadpodidbinding: key-vault-identity
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "identity-api"
+        dapr.io/app-port: "80"
+        dapr.io/config: "dapr-config"
+        dapr.io/log-as-json: "true"
+    spec:
+      containers:
+        - name: identity-api
+          image: {{ .Values.global.containerRegistry }}/identity.api:{{ .Values.identityImageTag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: test
+              value: test
+            {{- if .Values.identity.sqlConnectionStringEnvironmentVariable }}
+            {{ tpl .Values.identity.sqlConnectionStringEnvironmentVariable . | indent 12 | trim }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: identity-cm
+          readinessProbe:
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          {{- if .Values.identity.secretProviderVolumeMount }}
+          {{ tpl .Values.identity.secretProviderVolumeMount . | indent 12 | trim }}
+          {{- end }}
+      {{- if .Values.identity.secretProviderVolume }}
+      {{ tpl .Values.identity.secretProviderVolume . | indent 8 | trim }}
+      {{- end }}
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: identity-api
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: eshop
+    service: identity
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: identity
+
