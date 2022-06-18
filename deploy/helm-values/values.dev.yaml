@@ -8,7 +8,7 @@ ingress:
   forceSSLRedirect: true
   certManager:
     enabled: true
-    environment: staging
+    environment: prod
   tls:
     - secretName: dev-eshop-boringtestdomain-nl-tls
       hosts:
