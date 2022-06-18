@@ -13,10 +13,6 @@ data:
   SeqServerUrl: http://seq
   IssuerUrl: {{ .Values.global.protocol }}://{{ .Values.global.hostName}}/identity
   BlazorClientUrlExternal: {{ .Values.global.protocol }}://{{ .Values.global.hostName}}
-  # Temporarily while waiting for https://github.com/dapr/dotnet-sdk/issues/779 to get fixed.
-  #ConnectionStrings__IdentityDB: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
-  ConnectionStrings__IdentityDB: {{ .Values.identity.sqlConnectionString }}
-
 
 ---
 
@@ -57,8 +53,11 @@ spec:
           env:
             - name: test
               value: test
-            {{- if .Values.identity.sqlConnectionStringEnvironmentVariable }}
-            {{ tpl .Values.identity.sqlConnectionStringEnvironmentVariable . | indent 12 | trim }}
+            {{- if .Values.identity.sqlConnectionStringProd }}
+            {{ tpl .Values.identity.sqlConnectionStringProd . | indent 12 | trim }}
+            {{- end }}
+            {{- if .Values.identity.sqlConnectionStringDev }}
+            {{ tpl .Values.identity.sqlConnectionStringDev . | indent 12 | trim }}
             {{- end }}
           envFrom:
             - configMapRef:

@@ -1,0 +1,45 @@
+global:
+  namespace: eshop
+  protocol: https
+  hostName: dev.eshop.boringtestdomain.nl
+  containerRegistry: demo01cr.azurecr.io #eshopdapr #or demo01cr.azurecr.io
+
+secrets:
+  tenantId: 63060cb1-0960-4615-8769-b110040fa763
+  keyVaultName: kube-obs-a-crypt
+  aksSecretProviderEnabled: false
+  keyVaultClientId: bdd1517e-b2b1-46c1-b140-e83dc8fdab54
+
+ingress:
+  forceSSLRedirect: true
+  certManager:
+    enabled: true
+    environment: staging
+  tls:
+    - secretName: dev-eshop-boringtestdomain-nl-tls
+      hosts:
+        - dev.eshop.boringtestdomain.nl
+
+dapr:
+  pubsub:
+    azureEnabled: true
+
+identity:
+  secretProviderVolume: |
+    volumes:
+      - name: secrets-store01-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-csi-secret-provider"
+  secretProviderVolumeMount: |
+    volumeMounts:
+      - name: secrets-store01-inline
+        mountPath: "/mnt/secrets-store"
+  sqlConnectionStringEnvironmentVariable: |
+    - name: ConnectionStrings__IdentityDB
+      valueFrom:
+        secretKeyRef:
+          name: sql-connection-string-secret
+          key: secret

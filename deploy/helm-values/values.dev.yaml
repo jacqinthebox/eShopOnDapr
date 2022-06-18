@@ -1,0 +1,15 @@
+global:
+  namespace: eshop
+  protocol: https
+  hostName: dev.eshop.boringtestdomain.nl
+  containerRegistry: demo01cr.azurecr.io #eshopdapr #or demo01cr.azurecr.io
+
+ingress:
+  forceSSLRedirect: true
+  certManager:
+    enabled: true
+    environment: staging
+  tls:
+    - secretName: dev-eshop-boringtestdomain-nl-tls
+      hosts:
+        - dev.eshop.boringtestdomain.nl

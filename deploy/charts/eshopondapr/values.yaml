@@ -1,22 +1,36 @@
+# global variable for application
 global:
   namespace: eshop
   protocol: https
-  hostName: dev.eshop.boringtestdomain.nl
-  tenantId: 63060cb1-0960-4615-8769-b110040fa763
-  keyVaultName: kube-obs-a-crypt
-  aksSecretProviderEnabled: false
+  hostName: webshop.internal.io
   containerRegistry: demo01cr.azurecr.io #eshopdapr #or demo01cr.azurecr.io
 
-ingress:
-  forceSSLRedirect: true
-  certManager:
-    enabled: true
-    environment: staging
-  tls:
-    - secretName: dev-eshop-boringtestdomain-nl-tls
-      hosts:
-        - dev.eshop.boringtestdomain.nl
+secrets:
+  keyVaultName: my-keyvault-name
+  # aksSecretProviderEnabled is for Secrets Store CSI Driver in an AKS cluster
+  aksSecretProviderEnabled: false
+  # tenantId for is for Secrets Store CSI Driver to authenticate to the KeyVault
+  tenantId: 00000000-0000-0000-0000-000000000000
+  # keyVaultClientId is needed if Dapr uses the KeyVault
+  keyVaultClientId: 00000000-0000-0000-0000-000000000000
 
+ingress:
+  forceSSLRedirect: false
+  certManager:
+    # enabled can be set to true if cert-manager is installed and used
+    enabled: false
+    #environment can be staging or prod
+    environment: staging
+  tls: []
+#    - secretName: webshop-internal-io-tls
+#      hosts:
+#        - webshop.internal.io
+
+dapr:
+  pubsub:
+    azureEnabled: false
+
+# tags
 apiGatewayTag: latest
 basketImageTag: latest
 blazorClientImageTag: latest
@@ -26,14 +40,10 @@ orderingImageTag: latest
 paymentImageTag: latest
 webshoppingaggImageTag: latest
 
-
-dapr:
-  keyVaultClientId: bdd1517e-b2b1-46c1-b140-e83dc8fdab54
-  pubsub:
-    azureEnabled: false
-
 identity:
-  sqlConnectionString: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
+  sqlConnectionStringDev: |
+    - name: ConnectionStrings__IdentityDB
+      value: Server=sqldata;Database=Microsoft.eShopOnDapr.Service.IdentityDb;User Id=sa;Password=Pass@word;TrustServerCertificate=true
   secretProviderVolume: []
   #secretProviderVolume: |
   #  volumes:
@@ -48,7 +58,7 @@ identity:
   #  volumeMounts:
   #    - name: secrets-store01-inline
   #      mountPath: "/mnt/secrets-store"
-  sqlConnectionStringEnvironmentVariable: []
+  sqlConnectionStringProd: []
   #sqlConnectionStringEnvironmentVariable: |
   #  - name: ConnectionStrings__IdentityDB
   #    valueFrom:

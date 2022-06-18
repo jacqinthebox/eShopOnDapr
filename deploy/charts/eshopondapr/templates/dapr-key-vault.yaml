@@ -2,12 +2,12 @@ apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
   name: azurekeyvault
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
 spec:
   type: secretstores.azure.keyvault
   version: v1
   metadata:
     - name: vaultName
-      value: {{ .Values.keyVaultName }}
+      value: {{ .Values.secrets.keyVaultName }}
     - name: spnClientId
-      value: {{ .Values.dapr.keyVaultClientId }}
+      value: {{ .Values.secrets.keyVaultClientId }}
