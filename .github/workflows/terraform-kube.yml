@@ -14,6 +14,7 @@ on:
           - plumb
       work-dir:
         description: path to tf files, e.g. deploy/terraform/environments/kube-demo
+        default: "deploy/terraform/environments/kube-dev"
         required: true
       cluster-prefix:
         description: cluster-prefix or environment name, e.g. kube-demo-a
@@ -33,12 +34,12 @@ on:
         required: false
         description: the domain name
       dns-resourcegroup:
-        description: dns resource grouo
+        description: azure dns resource grouo
         required: true
         default: "demo01-rg"
       dns-subscription:
         required: true
-        description: subscription name or gui
+        description: subscription name or guid
         default: "demo01"
 
 permissions:
@@ -55,6 +56,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
       TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      TF_VAR_prefix: ${{ github.event.inputs.cluster-prefix }}
       TF_VAR_vm_admin_password: ${{ secrets.VM_ADMIN_PASSWORD }}
       TF_VAR_backend_storage_account_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}
       TF_VAR_backend_resource_group_name: ${{ secrets.TF_VAR_BACKEND_STORAGE_ACCOUNT_NAME }}

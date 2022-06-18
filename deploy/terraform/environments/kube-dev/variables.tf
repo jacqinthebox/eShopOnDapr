@@ -1,5 +1,5 @@
 variable prefix {
-  default = "kube-dev-a"
+  default = "can-be-set-in-github-actions-dropdown"
 }
 
 variable "tenant_id" {} #will be set from environment variable
