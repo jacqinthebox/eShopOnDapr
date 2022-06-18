@@ -17,10 +17,12 @@ on:
         default: "deploy/terraform/environments/kube-dev"
         required: true
       cluster-prefix:
-        description: cluster-prefix or environment name, e.g. kube-demo-a
+        description: cluster-prefix or environment name, e.g. kube-dev-a
+        default: kube-dev-a
         required: true
       env-short:
         description: short environment name, e.g. dev, tst, prd
+        default: dev
         required: true
       namespace:
         default: "eshop"
@@ -95,6 +97,7 @@ jobs:
       - name: Terraform destroy
         if: github.event.inputs.lets-go == 'destroy'
         run: |
+          terraform -chdir="$TF_WORK_DIR" plan
           terraform -chdir=$TF_WORK_DIR init \
           -backend-config "resource_group_name=$TF_VAR_backend_resource_group_name" \
           -backend-config "storage_account_name=$TF_VAR_backend_resource_group_name" \
