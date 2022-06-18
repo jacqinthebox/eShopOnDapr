@@ -1,3 +1,5 @@
+[![helm-ci](https://github.com/yulia-meijs/eShopOnDapr/actions/workflows/helm-ci.yml/badge.svg)](https://github.com/yulia-meijs/eShopOnDapr/actions/workflows/helm-ci.yml)
+
 # eShop on Dapr
 
 A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/).
