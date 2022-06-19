@@ -175,7 +175,7 @@ jobs:
 
       - name: Add Grafana
         run: |
-          sed -i -e 's/#domain#/ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}' ./deploy/helm-values/grafana-values.yaml
+          sed -i -e 's/#domain#/ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}/g' ./deploy/helm-values/grafana-values.yaml
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
           helm upgrade --install grafana grafana/grafana --namespace monitoring -f ./deploy/helm-values/grafana-values.yaml
