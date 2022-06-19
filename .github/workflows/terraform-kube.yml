@@ -181,7 +181,7 @@ jobs:
           helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
             --set server.ingress.enabled=true \
             --set server.ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
-            --set server.ingress.hosts[0]=prometheus.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}
+            --set server.ingress.hosts[0]=ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}
 
       - name: Add Grafana
         run: |
@@ -189,8 +189,12 @@ jobs:
           helm repo update
           helm upgrade --install grafana grafana/grafana --namespace monitoring \
             --set ingress.enabled=true \
-            --set ingress.hosts[0]=grafana.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
+            --set ingress.hosts[0]=ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
             --set ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
+            --set ingress.path=/grafana \
+            --set grafana.ini.server.domain=ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
+            --set grafana.ini.server.root_url="%(protocol)s://%(domain)s/grafana" \
+            --set grafana.ini.server.serve_from_sub_path=true
 
       - name: Add kube-state-metrics
         run: |
@@ -204,5 +208,4 @@ jobs:
           echo $LOADBALANCER_IP
           az account set --subscription ${{ env.DNS_SUBSCRIPTION }}
           az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name ${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name prometheus.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
-          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name grafana.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60
+          az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name ops.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60         
