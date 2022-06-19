@@ -139,6 +139,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Add ingress-controller
+        run: |
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx --namespace kube-ingress --create-namespace --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
+
       - name: Add Dapr
         run: |
           helm repo add dapr https://dapr.github.io/helm-charts/ && helm repo update
@@ -152,22 +158,6 @@ jobs:
       - name: Add cert-manager
         run: |
           echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
-
-      - name: Add ingress-controller
-        run: |
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx --namespace kube-ingress --create-namespace --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
-
-      - name: Add pod identities
-        run: |
-          echo "lots of plumbing to get it enabled"
-          echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
-          echo $ | az extension add --name aks-preview && az extension update --name aks-preview
-          echo $ | az aks update -n ${{ github.event.inputs.cluster-prefix }}-cluster -g ${{ github.event.inputs.cluster-prefix }}-cluster-rg --enable-pod-identity
-          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
-          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
 
       - name: Add lets-encrypt issuers
         run: |
@@ -185,16 +175,10 @@ jobs:
 
       - name: Add Grafana
         run: |
+          sed -i -e 's/#domain#/ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }}' ./deploy/helm-values/grafana-values.yaml
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
-          helm upgrade --install grafana grafana/grafana --namespace monitoring \
-            --set ingress.enabled=true \
-            --set ingress.hosts[0]=ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
-            --set ingress.annotations."kubernetes\.io/ingress\.class"="nginx" \
-            --set ingress.path=/grafana \
-            --set grafana.ini.server.domain=ops.${{ env.ENV_SHORT }}.${{ env.DOMAIN_NAME }} \
-            --set grafana.ini.server.root_url="%(protocol)s://%(domain)s/grafana" \
-            --set grafana.ini.server.serve_from_sub_path=true
+          helm upgrade --install grafana grafana/grafana --namespace monitoring -f ./deploy/helm-values/grafana-values.yaml
 
       - name: Add kube-state-metrics
         run: |
@@ -209,3 +193,13 @@ jobs:
           az account set --subscription ${{ env.DNS_SUBSCRIPTION }}
           az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name ${{ env.HOST_NAME }} --ipv4-address $LOADBALANCER_IP --ttl 60
           az network dns record-set a add-record --resource-group ${{ env.DNS_RESOURCEGROUP }} --zone-name ${{ env.DOMAIN_NAME }} --record-set-name ops.${{ env.ENV_SHORT }} --ipv4-address $LOADBALANCER_IP --ttl 60         
+
+      - name: Add pod identities
+        run: |
+          echo "lots of plumbing to get it enabled"
+          echo $ | az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+          echo $ | az extension add --name aks-preview && az extension update --name aks-preview
+          echo $ | az aks update -n ${{ github.event.inputs.cluster-prefix }}-cluster -g ${{ github.event.inputs.cluster-prefix }}-cluster-rg --enable-pod-identity
+          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name sql-server-identity --identity-resource-id $(az identity show --name ${{ env.ENVIRONMENT }}-sql-server-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name service-bus-identity --identity-resource-id $(az identity show --name service-bus-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
+          echo $ | az aks pod-identity add --resource-group ${{ env.ENVIRONMENT }}-cluster-rg --cluster-name ${{ env.ENVIRONMENT }}-cluster --namespace  ${{ env.ESHOP_NAMESPACE }} --name key-vault-identity --identity-resource-id $(az identity show --name key-vault-identity --resource-group ${{ env.ENVIRONMENT }}-cluster-nodes-rg --query id -o tsv)
