@@ -42,7 +42,7 @@ on:
         default: "demo01-rg"
       dns-subscription:
         required: true
-        description: subscription name or guid
+        description: azure dns subscription name or guid
         default: "demo01"
 
 permissions:
@@ -158,6 +158,12 @@ jobs:
       - name: Add cert-manager
         run: |
           echo $ | kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+
+      - name: Add ingress-controller
+        run: |
+          echo $ | helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          echo $ | helm repo update
+          echo $ | helm upgrade --install ${{ env.ENVIRONMENT }} ingress-nginx/ingress-nginx  --namespace kube-ingress --create-namespace --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
 
       - name: Add lets-encrypt issuers
         run: |
