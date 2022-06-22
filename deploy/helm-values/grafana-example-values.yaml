@@ -1,0 +1,16 @@
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+  path: /grafana/?(.*)
+  hosts:
+    - ops.eshop.example.io
+
+grafana.ini:
+  server:
+    domain: ops.eshop.example.io
+    root_url: "%(protocol)s://%(domain)s/grafana"
+    serve_from_sub_path: true
