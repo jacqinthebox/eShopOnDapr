@@ -1,0 +1,15 @@
+global:
+  namespace: eshop
+  protocol: https
+  hostName: dev.eshop.example.io
+  containerRegistry: eshopdapr
+
+ingress:
+  forceSSLRedirect: false
+  certManager:
+    enabled: false
+    environment: staging
+  tls:
+    - secretName: dev-eshop-example-tls
+      hosts:
+        - dev.eshop.example.io
