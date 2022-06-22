@@ -1,7 +1,4 @@
 # Monitoring
-https://www.azuredevopslabs.com/labs/azuredevops/appinsights/
-
-https://docs.microsoft.com/en-us/azure/aks/monitor-aks
 
 ```sh
 az provider register --namespace Microsoft.OperationsManagement
@@ -104,4 +101,3 @@ password:
 Add a new datasource with url http://prometheus-server
 then import a dashboard: https://raw.githubusercontent.com/jacqinthebox/eShopOnDapr/main/deploy/grafana-dashboard.json
 
-https://github.com/Azure-Samples/azure-voting-app
