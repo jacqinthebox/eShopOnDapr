@@ -89,8 +89,6 @@ Install prometheus
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
 helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring -f ./deploy/helm-values/prometheus-example-values.yaml
 ```
 
