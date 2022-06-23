@@ -17,6 +17,9 @@ Build the cluster
 az aks get-credentials --resource-group fedpol-dev-cluster-rg --name fedpol-dev-cluster --admin
 ```
 
+Install
+https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+
 Install Dapr
 
 ```
