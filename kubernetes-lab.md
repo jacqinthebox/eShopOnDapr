@@ -116,6 +116,8 @@ kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-pass
 ```
 
 Login to grafana
+http://ops.eshop.example.io/grafana
+
 username: admin
 password: 
 
