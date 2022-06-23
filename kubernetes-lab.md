@@ -64,18 +64,20 @@ helm repo update
 helm upgrade --install eshop-ingress ingress-nginx/ingress-nginx --namespace kube-ingress --create-namespace --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
 ```
 
-Install eshop
+Install eshop.
+For this you need to clone this repository because you need the files in the deploy/charts folder.
 
 ```
 kubectl config set-context  --current --namespace eshop 
 helm upgrade --install eshop deploy/charts/eshopondapr -f deploy/helm-values/eshop-example-values.yaml
 ```
 
-add to hostfile
+add the external IP to your hostfile
 
 ```
 kubectl get services eshop-ingress-ingress-nginx-controller -n kube-ingress -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
+For exemple edit `/etc/hosts` or `C:\Windows\System32\drivers\etc\hosts` and add the following:
 
 ```
 20.31.101.115 dev.eshop.example.io
