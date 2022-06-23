@@ -8,7 +8,7 @@ az extension add --name aks-preview
 
 az account set --subscription msdn01
 az group create -g fedpol-dev-cluster-rg --location westeurope
-az aks create -g fedpol-dev-cluster-rg -n fedpol-dev-cluster --node-count 2 --location westeurope --enable-addons monitoring --max-pods 110
+az aks create -g fedpol-dev-cluster-rg -n fedpol-dev-cluster --node-count 2 --location westeurope --enable-addons monitoring --max-pods 110 --generate-ssh-keys
 ```
 
 Build the cluster
