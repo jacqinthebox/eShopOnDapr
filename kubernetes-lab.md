@@ -6,7 +6,7 @@ az provider register --namespace Microsoft.OperationalInsights
 az feature register --name EnablePodIdentityPreview   --namespace Microsoft.ContainerService
 az extension add --name aks-preview
 
-az account set --subscription msdn01
+az account set --subscription <YOUR_SUBSCRIPTION_NAME_OR_GUID>
 az group create -g fedpol-dev-cluster-rg --location westeurope
 az aks create -g fedpol-dev-cluster-rg -n fedpol-dev-cluster --node-count 2 --location westeurope --enable-addons monitoring --max-pods 110 --generate-ssh-keys
 ```
