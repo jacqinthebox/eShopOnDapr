@@ -17,7 +17,8 @@ Build the cluster
 az aks get-credentials --resource-group fedpol-dev-cluster-rg --name fedpol-dev-cluster --admin
 ```
 
-Install
+
+Install kubectl by downloading 
 https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
 
 Install Dapr
@@ -28,6 +29,10 @@ wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O 
 # on windows
 
 powershell -Command "iwr -useb https://raw.githubusercontent.com/dapr/cli/master/install/install.ps1 | iex"
+
+# on windows without admin rights
+
+$script=iwr -useb https://raw.githubusercontent.com/dapr/cli/master/install/install.ps1; $block=[ScriptBlock]::Create($script); invoke-command -ScriptBlock $block -ArgumentList "", "$HOME/dapr"
 
 ```
 
