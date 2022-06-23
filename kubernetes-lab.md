@@ -46,9 +46,7 @@ Install Helm
 
 Download this file and puth it in your path
 
-```
 https://get.helm.sh/helm-v3.9.0-windows-amd64.zip
-```
 
 
 
