@@ -122,5 +122,11 @@ username: admin
 password: 
 
 Add a new datasource with url http://prometheus-server
-then import a dashboard: https://raw.githubusercontent.com/jacqinthebox/eShopOnDapr/main/deploy/grafana-dashboard.json
+then import this dashboard: https://raw.githubusercontent.com/jacqinthebox/eShopOnDapr/main/deploy/grafana-dashboard.json
+
+Go to:
+
+http://ops.eshop.example.io
+
+Execute this query in Prometheus: `topk(10,sum(container_memory_working_set_bytes{namespace="eshop"}) by (container))`
 
