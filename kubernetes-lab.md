@@ -24,6 +24,11 @@ Install Dapr
 
 ```
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+
+# on windows
+
+powershell -Command "iwr -useb https://raw.githubusercontent.com/dapr/cli/master/install/install.ps1 | iex"
+
 ```
 
 ```
