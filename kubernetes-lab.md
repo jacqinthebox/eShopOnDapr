@@ -7,16 +7,15 @@ az feature register --name EnablePodIdentityPreview   --namespace Microsoft.Cont
 az extension add --name aks-preview
 
 az account set --subscription <YOUR_SUBSCRIPTION_NAME_OR_GUID>
-az group create -g fedpol-dev-cluster-rg --location westeurope
-az aks create -g fedpol-dev-cluster-rg -n fedpol-dev-cluster --node-count 2 --location westeurope --enable-addons monitoring --max-pods 110 --generate-ssh-keys
+az group create -g company-dev-cluster-rg --location westeurope
+az aks create -g company-dev-cluster-rg -n company-dev-cluster --node-count 2 --location westeurope --enable-addons monitoring --max-pods 110 --generate-ssh-keys
 ```
 
 Build the cluster
 
 ```
-az aks get-credentials --resource-group fedpol-dev-cluster-rg --name fedpol-dev-cluster --admin
+az aks get-credentials --resource-group company-dev-cluster-rg --name company-dev-cluster --admin
 ```
-
 
 Install kubectl by downloading 
 https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
@@ -129,4 +128,3 @@ Go to:
 http://ops.eshop.example.io
 
 Execute this query in Prometheus: `topk(10,sum(container_memory_working_set_bytes{namespace="eshop"}) by (container))`
-
